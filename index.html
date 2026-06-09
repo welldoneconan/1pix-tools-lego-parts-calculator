@@ -3,670 +3,81 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>LEGO Model Parts & Weight Calculator</title>
+  <title>LEGO Parts / Weight / Size Calculator</title>
   <style>
-    :root {
-      --bg: #0f172a;
-      --panel: #111827;
-      --panel2: #172033;
-      --text: #e5e7eb;
-      --muted: #94a3b8;
-      --line: rgba(148, 163, 184, 0.22);
-      --blue: #60a5fa;
-      --green: #34d399;
-      --yellow: #facc15;
-      --orange: #fb923c;
-      --pink: #fb7185;
-      --violet: #a78bfa;
-      --red: #f87171;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(96,165,250,.20), transparent 32rem),
-        radial-gradient(circle at top right, rgba(251,113,133,.15), transparent 34rem),
-        var(--bg);
-      line-height: 1.45;
-    }
-
-    .wrap {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 30px 18px 48px;
-    }
-
-    .hero {
-      margin-bottom: 20px;
-    }
-
-    h1 {
-      margin: 0 0 8px;
-      font-size: clamp(28px, 4vw, 46px);
-      line-height: 1.04;
-      letter-spacing: -0.04em;
-    }
-
-    .subtitle {
-      max-width: 850px;
-      margin: 0;
-      color: var(--muted);
-      font-size: 15px;
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: 380px minmax(0, 1fr);
-      gap: 18px;
-      align-items: start;
-    }
-
-    @media (max-width: 900px) {
-      .layout { grid-template-columns: 1fr; }
-    }
-
-    .card {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.025));
-      box-shadow: 0 24px 80px rgba(0,0,0,.20);
-      overflow: hidden;
-    }
-
-    .card-h {
-      padding: 15px 18px;
-      border-bottom: 1px solid var(--line);
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .card-h h2 {
-      margin: 0;
-      font-size: 15px;
-    }
-
-    .pill {
-      font-size: 11px;
-      font-weight: 800;
-      color: #08111f;
-      background: var(--blue);
-      border-radius: 999px;
-      padding: 4px 8px;
-      white-space: nowrap;
-    }
-
-    .card-b { padding: 18px; }
-
-    .inputs { display: grid; gap: 14px; }
-
-    label {
-      display: grid;
-      gap: 6px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    input[type="number"], input[type="range"] {
-      width: 100%;
-    }
-
-    input[type="number"] {
-      background: #1e293b;
-      border: 1px solid rgba(148,163,184,.28);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 11px 12px;
-      font-size: 15px;
-      outline: none;
-    }
-
-    input[type="number"]:focus {
-      border-color: rgba(96,165,250,.82);
-      box-shadow: 0 0 0 3px rgba(96,165,250,.14);
-    }
-
-    input[type="range"] { accent-color: var(--blue); }
-
-    .range-line {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .range-value {
-      color: var(--text);
-      font-weight: 900;
-      min-width: 52px;
-      text-align: right;
-    }
-
-    .hint { font-size: 12px; color: var(--muted); }
-
-    .row2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    @media (max-width: 560px) {
-      .row2 { grid-template-columns: 1fr; }
-    }
-
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    @media (max-width: 720px) {
-      .metrics { grid-template-columns: 1fr; }
-    }
-
-    .metric {
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: rgba(15,23,42,.58);
-      padding: 14px;
-      min-height: 96px;
-    }
-
-    .metric .k {
-      color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 7px;
-    }
-
-    .metric .v {
-      font-size: 25px;
-      line-height: 1.1;
-      font-weight: 900;
-      letter-spacing: -0.035em;
-    }
-
-    .metric .s {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .group {
-      border: 1px solid var(--line);
-      border-radius: 15px;
-      overflow: hidden;
-      margin-bottom: 12px;
-    }
-
-    .g-label {
-      padding: 9px 12px;
-      color: #08111f;
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: .02em;
-    }
-
-    .g-input .g-label { background: var(--yellow); }
-    .g-geo .g-label { background: var(--blue); }
-    .g-parts .g-label { background: var(--green); }
-    .g-balance .g-label { background: var(--violet); }
-    .g-fill .g-label { background: var(--orange); }
-    .g-weight .g-label { background: var(--pink); }
-
-    .g-content {
-      background: rgba(15,23,42,.45);
-      padding: 12px;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    @media (max-width: 600px) {
-      .g-content { grid-template-columns: 1fr; }
-    }
-
-    .kv {
-      border: 1px solid rgba(148,163,184,.16);
-      border-radius: 12px;
-      background: rgba(255,255,255,.025);
-      padding: 10px;
-    }
-
-    .kv .k { color: var(--muted); font-size: 11px; margin-bottom: 4px; }
-    .kv .v { color: var(--text); font-size: 15px; font-weight: 900; }
-
-    .status {
-      padding: 13px 14px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      margin-top: 10px;
-      background: rgba(255,255,255,.04);
-    }
-
-    .status b { display: block; margin-bottom: 4px; }
-    .status.good { border-color: rgba(52,211,153,.55); }
-    .status.warn { border-color: rgba(250,204,21,.62); }
-    .status.bad { border-color: rgba(248,113,113,.62); }
-
-    .small { color: var(--muted); font-size: 12px; }
-
-    .section-title {
-      margin: 18px 0 10px;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-      overflow: hidden;
-      border-radius: 14px;
-    }
-
-    th, td {
-      text-align: right;
-      padding: 10px 9px;
-      border-bottom: 1px solid rgba(148,163,184,.15);
-      white-space: nowrap;
-    }
-
-    th:first-child, td:first-child { text-align: left; }
-
-    thead th {
-      background: rgba(96,165,250,.13);
-      color: #dbeafe;
-      font-size: 12px;
-    }
-
-    tbody tr:hover td { background: rgba(255,255,255,.035); }
-
-    .footer-note {
-      color: var(--muted);
-      font-size: 12px;
-      margin: 16px 0 0;
-    }
+    :root { --bg:#0f172a; --line:rgba(148,163,184,.22); --text:#e5e7eb; --muted:#94a3b8; --accent:#60a5fa; --green:#34d399; --yellow:#facc15; --orange:#fb923c; --purple:#a78bfa; --input:#111827; --locked:#facc15; --unlocked:#64748b; }
+    *{box-sizing:border-box} body{margin:0;min-height:100vh;background:radial-gradient(circle at top left,rgba(96,165,250,.25),transparent 34rem),radial-gradient(circle at top right,rgba(167,139,250,.14),transparent 38rem),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}.wrap{max-width:1260px;margin:0 auto;padding:30px 18px 48px}.hero{display:grid;gap:8px;margin-bottom:18px}h1{margin:0;font-size:clamp(28px,4vw,46px);line-height:1.05;letter-spacing:-.04em}.subtitle{margin:0;color:var(--muted);max-width:900px;font-size:14px}.layout{display:grid;grid-template-columns:minmax(360px,430px) minmax(0,1fr);gap:16px;align-items:start}@media(max-width:980px){.layout{grid-template-columns:1fr}}.card{border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.025));box-shadow:0 24px 80px rgba(0,0,0,.22);overflow:hidden}.card-header{padding:15px 17px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}.card-header h2{margin:0;font-size:15px}.card-body{padding:16px}.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;color:#0b1220;background:var(--accent);font-size:11px;font-weight:800;white-space:nowrap}.section-title{margin:18px 0 10px;color:var(--muted);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.14em}.section-title:first-child{margin-top:0}.control{display:grid;grid-template-columns:30px 1fr 92px;gap:9px;align-items:center;padding:10px;border:1px solid rgba(148,163,184,.16);border-radius:14px;background:rgba(15,23,42,.42);margin-bottom:9px}.control.assumption{grid-template-columns:1fr 92px}.lock-btn{width:30px;height:30px;display:grid;place-items:center;border:1px solid rgba(148,163,184,.25);border-radius:10px;background:rgba(255,255,255,.04);color:var(--unlocked);cursor:pointer;font-size:15px;line-height:1}.lock-btn.locked{color:#0b1220;background:var(--locked);border-color:var(--locked)}.control-main{display:grid;gap:5px;min-width:0}.label-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px}.label{font-size:13px;font-weight:750}.hint{font-size:11px;color:var(--muted);white-space:nowrap}input[type=range]{width:100%;accent-color:var(--accent);margin:0}input[type=number]{width:100%;border:1px solid rgba(148,163,184,.25);background:var(--input);color:var(--text);border-radius:11px;padding:8px 8px;font-size:13px;text-align:right;outline:none}input[type=number]:focus{border-color:rgba(96,165,250,.75);box-shadow:0 0 0 3px rgba(96,165,250,.15)}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}@media(max-width:760px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:460px){.metrics{grid-template-columns:1fr}}.metric{min-height:92px;padding:13px;border:1px solid var(--line);border-radius:16px;background:rgba(15,23,42,.55)}.metric .k{color:var(--muted);font-size:11px;margin-bottom:7px}.metric .v{font-size:23px;font-weight:900;letter-spacing:-.035em;white-space:nowrap}.metric .s{margin-top:4px;color:var(--muted);font-size:11px}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}@media(max-width:760px){.grid2{grid-template-columns:1fr}}.group{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:rgba(15,23,42,.36)}.group-title{padding:9px 12px;color:#0b1220;font-size:12px;font-weight:900}.blue{background:var(--accent)}.green{background:var(--green)}.orange{background:var(--orange)}.purple{background:var(--purple)}.yellow{background:var(--yellow)}.group-body{padding:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kv{border:1px solid rgba(148,163,184,.15);border-radius:12px;background:rgba(255,255,255,.025);padding:9px;min-width:0}.kv .k{color:var(--muted);font-size:11px;margin-bottom:4px}.kv .v{font-size:14px;font-weight:850;word-break:break-word}.status{margin-top:12px;padding:12px 13px;border:1px solid var(--line);border-radius:14px;color:var(--muted);background:rgba(15,23,42,.5);font-size:12px}.status b{display:block;color:var(--text);margin-bottom:4px;font-size:13px}.status.good{border-color:rgba(52,211,153,.55)}table{width:100%;border-collapse:collapse;font-size:12px;overflow:hidden;border-radius:14px;margin-top:12px}th,td{padding:9px 8px;border-bottom:1px solid rgba(148,163,184,.13);text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}th{color:#dbeafe;background:rgba(96,165,250,.13);font-weight:800}tbody tr:hover td{background:rgba(255,255,255,.035)}.small-note{margin:12px 0 0;color:var(--muted);font-size:11px}.lock-help{display:grid;gap:6px;color:var(--muted);font-size:12px}.lock-help b{color:var(--text)}
   </style>
 </head>
 <body>
   <main class="wrap">
     <section class="hero">
-      <h1>LEGO Model Parts & Weight Calculator</h1>
-      <p class="subtitle">
-        Estimate part count and weight from occupied LEGO volume, external void, and a simple small-vs-large part balance.
-        Small parts are denser and increase part count. Large parts are more hollow and grow model size more efficiently.
-      </p>
+      <h1>LEGO Parts / Weight / Size Calculator</h1>
+      <p class="subtitle">Lock the values you want to keep. The unlocked values recalculate automatically from model size, void, part-size balance, target part count, or target weight.</p>
     </section>
 
     <section class="layout">
       <aside class="card">
-        <div class="card-h">
-          <h2>Inputs</h2>
-          <span class="pill">metric</span>
-        </div>
-        <div class="card-b">
-          <div class="inputs">
-            <label>
-              Occupied LEGO volume, cm³
-              <input id="occupiedVolume" type="number" min="1" step="1" value="19458" />
-              <span class="hint">Volume occupied by LEGO parts before external voids.</span>
-            </label>
-
-            <label>
-              External void, %
-              <input id="externalVoid" type="number" min="0" max="95" step="0.1" value="79.1" />
-              <span class="hint">Empty envelope space: rooms, gaps, skeleton openings, hollow space.</span>
-            </label>
-
-            <label>
-              Detail balance: small dense parts vs large hollow parts
-              <div class="range-line">
-                <input id="detailBalance" type="range" min="0" max="100" step="1" value="60" />
-                <span class="range-value" id="detailBalanceValue">60%</span>
-              </div>
-              <span class="hint">0% = mostly large structural parts. 100% = many small dense decorative parts.</span>
-            </label>
-
-            <div class="row2">
-              <label>
-                Actual parts, optional
-                <input id="actualParts" type="number" min="0" step="1" value="10073" />
-              </label>
-              <label>
-                Stud.io weight, g, optional
-                <input id="studioWeight" type="number" min="0" step="1" value="9000" />
-              </label>
-            </div>
-
-            <div class="row2">
-              <label>
-                ABS density, g/cm³
-                <input id="absDensity" type="number" min="0.1" step="0.01" value="1.05" />
-              </label>
-              <label>
-                Small part volume, cm³
-                <input id="smallPartVolume" type="number" min="0.1" step="0.01" value="0.65" />
-              </label>
-            </div>
-          </div>
-
-          <p class="footer-note">
-            This calculator uses a simplified geometric model. It does not read a BrickLink weight table.
-          </p>
+        <div class="card-header"><h2>Inputs</h2><span class="pill">cm / parts / g</span></div>
+        <div class="card-body">
+          <div class="section-title">Dimensions</div>
+          <div id="control-length" class="control"></div>
+          <div id="control-width" class="control"></div>
+          <div id="control-height" class="control"></div>
+          <div class="section-title">Targets</div>
+          <div id="control-parts" class="control"></div>
+          <div id="control-weight" class="control"></div>
+          <div class="section-title">Assumptions</div>
+          <div id="control-void" class="control assumption"></div>
+          <div id="control-balance" class="control"></div>
+          <div class="status good"><b>How locks work</b><div class="lock-help"><span>🔓 unlocked = calculated by the tool</span><span>🔒 locked = used as an anchor, but you can still move it</span><span>The calculator auto-unlocks one value when the current lock set becomes impossible.</span></div></div>
         </div>
       </aside>
 
       <section>
         <div class="metrics">
-          <div class="metric">
-            <div class="k">Estimated weight</div>
-            <div class="v" id="mainWeight">—</div>
-            <div class="s" id="mainWeightSub">—</div>
-          </div>
-          <div class="metric">
-            <div class="k">Estimated parts</div>
-            <div class="v" id="mainParts">—</div>
-            <div class="s" id="mainPartsSub">—</div>
-          </div>
-          <div class="metric">
-            <div class="k">Small dense volume share</div>
-            <div class="v" id="mainSmallShare">—</div>
-            <div class="s">Driven by detail balance</div>
-          </div>
+          <div class="metric"><div class="k">Length × width × height</div><div class="v" id="metricDims">—</div><div class="s" id="metricDimsSub">—</div></div>
+          <div class="metric"><div class="k">Estimated parts</div><div class="v" id="metricParts">—</div><div class="s" id="metricPartsSub">—</div></div>
+          <div class="metric"><div class="k">Estimated weight</div><div class="v" id="metricWeight">—</div><div class="s" id="metricWeightSub">—</div></div>
+          <div class="metric"><div class="k">Detail balance</div><div class="v" id="metricBalance">—</div><div class="s" id="metricBalanceSub">—</div></div>
         </div>
-
-        <div class="card">
-          <div class="card-h">
-            <h2>Calculated model</h2>
-            <span class="pill">live</span>
-          </div>
-          <div class="card-b">
-            <div class="group g-geo">
-              <div class="g-label">Geometry</div>
-              <div class="g-content">
-                <div class="kv"><div class="k">Envelope volume</div><div class="v" id="envelopeVolume">—</div></div>
-                <div class="kv"><div class="k">Cube side with void</div><div class="v" id="cubeSide">—</div></div>
-                <div class="kv"><div class="k">Cube side no void</div><div class="v" id="cubeSideNoVoid">—</div></div>
-                <div class="kv"><div class="k">Bearing size = cube / 3, cap 128 mm</div><div class="v" id="bearingSize">—</div></div>
-              </div>
-            </div>
-
-            <div class="group g-balance">
-              <div class="g-label">Small / large part balance</div>
-              <div class="g-content">
-                <div class="kv"><div class="k">Detail balance input</div><div class="v" id="balanceOutput">—</div></div>
-                <div class="kv"><div class="k">Small dense volume share</div><div class="v" id="smallShare">—</div></div>
-                <div class="kv"><div class="k">Large hollow volume share</div><div class="v" id="largeShare">—</div></div>
-                <div class="kv"><div class="k">Balance implied by Stud.io weight</div><div class="v" id="balanceFromWeight">—</div></div>
-              </div>
-            </div>
-
-            <div class="group g-parts">
-              <div class="g-label">Part count</div>
-              <div class="g-content">
-                <div class="kv"><div class="k">Progressive large C_part</div><div class="v" id="largeCPart">—</div></div>
-                <div class="kv"><div class="k">Small part volume</div><div class="v" id="smallPartVolOut">—</div></div>
-                <div class="kv"><div class="k">Estimated parts</div><div class="v" id="estimatedParts">—</div></div>
-                <div class="kv"><div class="k">Balance implied by actual parts</div><div class="v" id="balanceFromParts">—</div></div>
-              </div>
-            </div>
-
-            <div class="group g-fill">
-              <div class="g-label">Internal fill</div>
-              <div class="g-content">
-                <div class="kv"><div class="k">Large part fill</div><div class="v" id="largeFill">—</div></div>
-                <div class="kv"><div class="k">Small part fill</div><div class="v" id="smallFill">—</div></div>
-                <div class="kv"><div class="k">Weighted internal fill</div><div class="v" id="weightedFill">—</div></div>
-                <div class="kv"><div class="k">Stud.io effective fill</div><div class="v" id="studioFill">—</div></div>
-              </div>
-            </div>
-
-            <div class="group g-weight">
-              <div class="g-label">Weight</div>
-              <div class="g-content">
-                <div class="kv"><div class="k">Estimated weight</div><div class="v" id="estimatedWeight">—</div></div>
-                <div class="kv"><div class="k">Stud.io weight</div><div class="v" id="studioWeightOut">—</div></div>
-                <div class="kv"><div class="k">Weight difference</div><div class="v" id="weightDiff">—</div></div>
-                <div class="kv"><div class="k">Actual C_part</div><div class="v" id="actualCPart">—</div></div>
-              </div>
-            </div>
-
-            <div id="partsStatus" class="status">—</div>
-            <div id="weightStatus" class="status">—</div>
-
-            <div class="section-title">Detail balance comparison</div>
-            <div style="overflow:auto;">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Balance</th>
-                    <th>Small share</th>
-                    <th>Parts</th>
-                    <th>Weight</th>
-                    <th>Fill</th>
-                  </tr>
-                </thead>
-                <tbody id="balanceRows"></tbody>
-              </table>
-            </div>
-
-            <p class="footer-note">
-              The previous “wrinkledness” idea is represented here only as part-size balance: more small dense parts means more parts and more plastic weight inside the same occupied LEGO volume.
-            </p>
-          </div>
+        <div class="grid2">
+          <div class="group"><div class="group-title blue">Volume and void</div><div class="group-body"><div class="kv"><div class="k">Envelope volume</div><div class="v" id="envVol">—</div></div><div class="kv"><div class="k">Occupied LEGO volume</div><div class="v" id="occVol">—</div></div><div class="kv"><div class="k">Void</div><div class="v" id="voidOut">—</div></div><div class="kv"><div class="k">Cube equivalent side</div><div class="v" id="cubeSide">—</div></div></div></div>
+          <div class="group"><div class="group-title purple">Voxel limits</div><div class="group-body"><div class="kv"><div class="k">Voxel side</div><div class="v" id="voxelSide">—</div></div><div class="kv"><div class="k">Min envelope side</div><div class="v" id="minSide">—</div></div><div class="kv"><div class="k">Max envelope side</div><div class="v" id="maxSide">—</div></div><div class="kv"><div class="k">Occupied voxel grid</div><div class="v">6 × 6 × 6</div></div></div></div>
+          <div class="group"><div class="group-title green">Part count model</div><div class="group-body"><div class="kv"><div class="k">Small dense share</div><div class="v" id="smallShare">—</div></div><div class="kv"><div class="k">Large hollow share</div><div class="v" id="largeShare">—</div></div><div class="kv"><div class="k">Progressive large C_part</div><div class="v" id="cPart">—</div></div><div class="kv"><div class="k">Parts / 100 cm³</div><div class="v" id="partsPer100">—</div></div></div></div>
+          <div class="group"><div class="group-title orange">Weight model</div><div class="group-body"><div class="kv"><div class="k">Bearing size</div><div class="v" id="bearingSize">—</div></div><div class="kv"><div class="k">Large part fill</div><div class="v" id="largeFill">—</div></div><div class="kv"><div class="k">Weighted internal fill</div><div class="v" id="weightedFill">—</div></div><div class="kv"><div class="k">ABS density</div><div class="v">1.05 g/cm³</div></div></div></div>
         </div>
+        <div id="solverStatus" class="status">—</div>
+        <div class="card" style="margin-top:14px"><div class="card-header"><h2>Balance samples</h2><span class="pill">same size + void</span></div><div class="card-body"><div style="overflow:auto"><table><thead><tr><th>Balance</th><th>Small share</th><th>Parts</th><th>Weight</th><th>Internal fill</th></tr></thead><tbody id="sampleRows"></tbody></table></div><p class="small-note">Detail balance controls the ratio of small dense parts to large hollow structural parts. Void controls the external empty space inside the model envelope.</p></div></div>
       </section>
     </section>
   </main>
 
   <script>
-    const $ = (id) => document.getElementById(id);
-    const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
-    const num = (id, fallback = 0) => {
-      const v = Number($(id).value);
-      return Number.isFinite(v) ? v : fallback;
-    };
-
-    const fmt = (value, digits = 1) => {
-      if (!Number.isFinite(value)) return "—";
-      return value.toLocaleString(undefined, { maximumFractionDigits: digits, minimumFractionDigits: digits });
-    };
-
-    const fmt0 = (value) => {
-      if (!Number.isFinite(value)) return "—";
-      return Math.round(value).toLocaleString();
-    };
-
-    const fmtWeight = (g) => {
-      if (!Number.isFinite(g)) return "—";
-      return g >= 1000 ? `${fmt(g / 1000, 2)} kg` : `${fmt(g, 0)} g`;
-    };
-
-    const fmtPct = (value, digits = 1) => Number.isFinite(value) ? `${fmt(value * 100, digits)}%` : "—";
-
-    function internalFill(sizeMm) {
-      const baseVoxelMm = 8;
-      const floor = 0.20;
-      const power = 0.85;
-      return clamp(floor + (1 - floor) * Math.pow(baseVoxelMm / Math.max(sizeMm, 0.001), power), floor, 1);
-    }
-
-    function progressiveCPart(occupiedVolume) {
-      const cPartMin = 2.4;
-      const cPartGrowth = 1.6;
-      const minVolume = 120;
-      const referenceMaxVolume = 5000;
-      const ratio = Math.log(Math.max(occupiedVolume, minVolume) / minVolume) / Math.log(referenceMaxVolume / minVolume);
-      return cPartMin + cPartGrowth * ratio;
-    }
-
-    function smallShareFromBalance(balance01) {
-      return 0.05 + balance01 * 0.30;
-    }
-
-    function calc(balancePercentOverride = null) {
-      const occupiedVolume = Math.max(1, num("occupiedVolume", 1));
-      const externalVoidPct = clamp(num("externalVoid", 75), 0, 95);
-      const externalVoid = externalVoidPct / 100;
-      const balancePercent = balancePercentOverride ?? clamp(num("detailBalance", 60), 0, 100);
-      const balance01 = balancePercent / 100;
-      const actualParts = Math.max(0, num("actualParts", 0));
-      const studioWeight = Math.max(0, num("studioWeight", 0));
-      const absDensity = Math.max(0.1, num("absDensity", 1.05));
-      const smallPartVolume = Math.max(0.1, num("smallPartVolume", 0.65));
-
-      const envelopeVolume = occupiedVolume / Math.max(1 - externalVoid, 0.01);
-      const cubeSideCm = Math.cbrt(envelopeVolume);
-      const cubeSideNoVoidCm = Math.cbrt(occupiedVolume);
-      const bearingSizeRawMm = cubeSideCm * 10 / 3;
-      const bearingSizeMm = Math.min(128, Math.max(8, bearingSizeRawMm));
-
-      const largePartVolume = progressiveCPart(occupiedVolume);
-      const smallShare = smallShareFromBalance(balance01);
-      const largeShare = 1 - smallShare;
-
-      const largeFill = internalFill(bearingSizeMm);
-      const smallFill = 1;
-      const weightedFill = smallShare * smallFill + largeShare * largeFill;
-      const estimatedWeight = occupiedVolume * weightedFill * absDensity;
-
-      const estimatedParts = occupiedVolume * (smallShare / smallPartVolume + largeShare / largePartVolume);
-      const actualCPart = actualParts > 0 ? occupiedVolume / actualParts : NaN;
-      const studioEffectiveFill = studioWeight > 0 ? studioWeight / (occupiedVolume * absDensity) : NaN;
-
-      const impliedSmallFromWeight = Number.isFinite(studioEffectiveFill)
-        ? clamp((studioEffectiveFill - largeFill) / (smallFill - largeFill), 0, 1)
-        : NaN;
-      const impliedBalanceFromWeight = Number.isFinite(impliedSmallFromWeight)
-        ? clamp((impliedSmallFromWeight - 0.05) / 0.30, 0, 1)
-        : NaN;
-
-      const partDensity = actualParts > 0 ? actualParts / occupiedVolume : NaN;
-      const impliedSmallFromParts = Number.isFinite(partDensity)
-        ? clamp((partDensity - (1 / largePartVolume)) / ((1 / smallPartVolume) - (1 / largePartVolume)), 0, 1)
-        : NaN;
-      const impliedBalanceFromParts = Number.isFinite(impliedSmallFromParts)
-        ? clamp((impliedSmallFromParts - 0.05) / 0.30, 0, 1)
-        : NaN;
-
-      return {
-        occupiedVolume,
-        externalVoidPct,
-        balancePercent,
-        actualParts,
-        studioWeight,
-        absDensity,
-        smallPartVolume,
-        envelopeVolume,
-        cubeSideCm,
-        cubeSideNoVoidCm,
-        bearingSizeRawMm,
-        bearingSizeMm,
-        largePartVolume,
-        smallShare,
-        largeShare,
-        largeFill,
-        smallFill,
-        weightedFill,
-        estimatedWeight,
-        estimatedParts,
-        actualCPart,
-        studioEffectiveFill,
-        impliedSmallFromWeight,
-        impliedBalanceFromWeight,
-        impliedSmallFromParts,
-        impliedBalanceFromParts,
-      };
-    }
-
-    function statusClassParts(r) {
-      if (!r.actualParts) return { cls: "", title: "Actual parts not provided", text: "Enter actual parts to compare against the estimate." };
-      const ratio = r.actualParts / r.estimatedParts;
-      if (ratio < 0.75) return { cls: "warn", title: "Lower part count than estimate", text: `Actual parts are ${fmt(ratio * 100, 0)}% of the estimate.` };
-      if (ratio <= 1.25) return { cls: "good", title: "Part count is close", text: `Actual parts are ${fmt(ratio * 100, 0)}% of the estimate.` };
-      if (ratio <= 1.75) return { cls: "warn", title: "Higher part count than estimate", text: `Actual parts are ${fmt(ratio * 100, 0)}% of the estimate.` };
-      return { cls: "bad", title: "Much higher part count", text: `Actual parts are ${fmt(ratio * 100, 0)}% of the estimate.` };
-    }
-
-    function statusClassWeight(r) {
-      if (!r.studioWeight) return { cls: "", title: "Stud.io weight not provided", text: "Enter Stud.io weight to compare effective fill." };
-      const ratio = r.studioWeight / r.estimatedWeight;
-      if (ratio < 0.80) return { cls: "warn", title: "Stud.io weight is lower", text: `Stud.io is ${fmt(ratio * 100, 0)}% of the estimate.` };
-      if (ratio <= 1.20) return { cls: "good", title: "Weight is close", text: `Stud.io is ${fmt(ratio * 100, 0)}% of the estimate.` };
-      return { cls: "warn", title: "Stud.io weight is higher", text: `Stud.io is ${fmt(ratio * 100, 0)}% of the estimate.` };
-    }
-
-    function update() {
-      const r = calc();
-
-      $("detailBalanceValue").textContent = `${fmt(r.balancePercent, 0)}%`;
-
-      $("mainWeight").textContent = fmtWeight(r.estimatedWeight);
-      $("mainWeightSub").textContent = `${fmtPct(r.weightedFill)} weighted internal fill`;
-      $("mainParts").textContent = fmt0(r.estimatedParts);
-      $("mainPartsSub").textContent = `${fmt(r.largePartVolume, 2)} cm³ large C_part / ${fmt(r.smallPartVolume, 2)} cm³ small part`;
-      $("mainSmallShare").textContent = fmtPct(r.smallShare);
-
-      $("envelopeVolume").textContent = `${fmt0(r.envelopeVolume)} cm³`;
-      $("cubeSide").textContent = `${fmt(r.cubeSideCm, 1)} cm`;
-      $("cubeSideNoVoid").textContent = `${fmt(r.cubeSideNoVoidCm, 1)} cm`;
-      $("bearingSize").textContent = `${fmt(r.bearingSizeMm, 1)} mm`;
-
-      $("balanceOutput").textContent = `${fmt(r.balancePercent, 0)}%`;
-      $("smallShare").textContent = fmtPct(r.smallShare);
-      $("largeShare").textContent = fmtPct(r.largeShare);
-      $("balanceFromWeight").textContent = Number.isFinite(r.impliedBalanceFromWeight) ? `${fmt(r.impliedBalanceFromWeight * 100, 0)}%` : "—";
-
-      $("largeCPart").textContent = `${fmt(r.largePartVolume, 2)} cm³ / part`;
-      $("smallPartVolOut").textContent = `${fmt(r.smallPartVolume, 2)} cm³ / part`;
-      $("estimatedParts").textContent = fmt0(r.estimatedParts);
-      $("balanceFromParts").textContent = Number.isFinite(r.impliedBalanceFromParts) ? `${fmt(r.impliedBalanceFromParts * 100, 0)}%` : "—";
-
-      $("largeFill").textContent = fmtPct(r.largeFill);
-      $("smallFill").textContent = fmtPct(r.smallFill);
-      $("weightedFill").textContent = fmtPct(r.weightedFill);
-      $("studioFill").textContent = Number.isFinite(r.studioEffectiveFill) ? fmtPct(r.studioEffectiveFill) : "—";
-
-      $("estimatedWeight").textContent = fmtWeight(r.estimatedWeight);
-      $("studioWeightOut").textContent = r.studioWeight > 0 ? fmtWeight(r.studioWeight) : "—";
-      $("weightDiff").textContent = r.studioWeight > 0 ? fmtWeight(r.studioWeight - r.estimatedWeight) : "—";
-      $("actualCPart").textContent = Number.isFinite(r.actualCPart) ? `${fmt(r.actualCPart, 2)} cm³ / part` : "—";
-
-      const ps = statusClassParts(r);
-      $("partsStatus").className = `status ${ps.cls}`;
-      $("partsStatus").innerHTML = `<b>${ps.title}</b><span class="small">${ps.text}</span>`;
-
-      const ws = statusClassWeight(r);
-      $("weightStatus").className = `status ${ws.cls}`;
-      $("weightStatus").innerHTML = `<b>${ws.title}</b><span class="small">${ws.text}</span>`;
-
-      const rows = [0, 25, 50, 60, 75, 100].map((b) => {
-        const rr = calc(b);
-        return `
-          <tr>
-            <td>${b}%</td>
-            <td>${fmtPct(rr.smallShare)}</td>
-            <td>${fmt0(rr.estimatedParts)}</td>
-            <td>${fmtWeight(rr.estimatedWeight)}</td>
-            <td>${fmtPct(rr.weightedFill)}</td>
-          </tr>
-        `;
-      }).join("");
-      $("balanceRows").innerHTML = rows;
-    }
-
-    document.querySelectorAll("input").forEach((el) => el.addEventListener("input", update));
-    update();
+    const ABS_DENSITY=1.05,V_MIN=20,V_MAX=200000,BASE_VOXEL_MM=8,SMALL_PART_VOLUME=0.65,INTERNAL_FILL_FLOOR=0.20,INTERNAL_FILL_POWER=0.85,MAX_BEARING_SIZE_MM=128;
+    const keys=["length","width","height","parts","weight","balance"],dimKeys=["length","width","height"];
+    const labels={length:"Length",width:"Width",height:"Height",parts:"Desired parts",weight:"Desired weight",void:"External void",balance:"Small / large detail balance"};
+    const hints={length:"cm",width:"cm",height:"cm",parts:"pcs",weight:"g",void:"%",balance:"%"};
+    const state={values:{length:12.6,width:12.6,height:12.6,parts:460,weight:640,void:50,balance:50},locks:{length:false,width:false,height:false,parts:false,weight:false,balance:true},currentOccupiedVolume:1000,currentEnvelopeVolume:2000,lastChanged:null,note:"Default model: 1000 cm³ occupied LEGO volume, 50% void, 50% detail balance."};
+    const el=id=>document.getElementById(id); const clamp=(x,a,b)=>Math.min(b,Math.max(a,x)); const finite=(x,f=0)=>Number.isFinite(Number(x))?Number(x):f;
+    const fmt=(x,d=1)=>Number.isFinite(x)?x.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}):"—"; const fmtInt=x=>Number.isFinite(x)?Math.round(x).toLocaleString():"—"; const fmtWeight=g=>!Number.isFinite(g)?"—":g>=1000?`${fmt(g/1000,2)} kg`:`${fmt(g,0)} g`; const fmtCm=x=>Number.isFinite(x)?`${fmt(x,1)} cm`:"—"; const pct=(x,d=1)=>Number.isFinite(x)?`${fmt(x*100,d)}%`:"—";
+    function smallShareFromBalance(balance){return 0.05+0.30*(clamp(balance,0,100)/100)}
+    function progressiveCPart(volume){const minVolume=120,cMin=2.4,cGrowth=1.6,refMax=5000;if(volume<=minVolume)return cMin;return cMin+cGrowth*Math.log(volume/minVolume)/Math.log(refMax/minVolume)}
+    function internalFill(sizeMm){const raw=INTERNAL_FILL_FLOOR+(1-INTERNAL_FILL_FLOOR)*Math.pow(BASE_VOXEL_MM/Math.max(sizeMm,.001),INTERNAL_FILL_POWER);return clamp(raw,INTERNAL_FILL_FLOOR,1)}
+    function calcFromVolume(volume,balance,voidPct){const voidRatio=clamp(voidPct/100,0,.9),envelopeVolume=volume/Math.max(1-voidRatio,.01),cubeSide=Math.cbrt(envelopeVolume),smallShare=smallShareFromBalance(balance),largeShare=1-smallShare,cPart=progressiveCPart(volume),parts=volume*(smallShare/SMALL_PART_VOLUME+largeShare/cPart),partsPer100=parts/volume*100,bearingSizeMm=clamp(cubeSide*10/3,BASE_VOXEL_MM,MAX_BEARING_SIZE_MM),largeFill=internalFill(bearingSizeMm),weightedFill=smallShare*1+largeShare*largeFill,weight=volume*weightedFill*ABS_DENSITY;return{volume,voidRatio,envelopeVolume,cubeSide,smallShare,largeShare,cPart,parts,partsPer100,bearingSizeMm,largeFill,weightedFill,weight}}
+    function solveVolumeForParts(targetParts,balance){const target=Math.max(1,targetParts);let lo=V_MIN,hi=V_MAX;for(let i=0;i<80;i++){const mid=(lo+hi)/2,p=calcFromVolume(mid,balance,state.values.void).parts;if(p<target)lo=mid;else hi=mid}return(lo+hi)/2}
+    function solveVolumeForWeight(targetWeight,balance,voidPct){const target=Math.max(1,targetWeight);let lo=V_MIN,hi=V_MAX;for(let i=0;i<80;i++){const mid=(lo+hi)/2,w=calcFromVolume(mid,balance,voidPct).weight;if(w<target)lo=mid;else hi=mid}return(lo+hi)/2}
+    function solveVolumeAndBalanceForPartsWeight(targetParts,targetWeight,voidPct){let best=null;for(let b=0;b<=100;b+=.5){const v=solveVolumeForParts(targetParts,b),model=calcFromVolume(v,b,voidPct),err=Math.abs(model.weight-targetWeight);if(!best||err<best.err)best={err,volume:v,balance:b,model}}return best}
+    function dimensionLimits(envelopeVolume,voidPct){const voidRatio=clamp(voidPct/100,0,.9),occupiedVolume=envelopeVolume*(1-voidRatio),occupiedCubeSide=Math.cbrt(Math.max(occupiedVolume,.001)),voxelSide=occupiedCubeSide/6,voidScale=Math.cbrt(Math.max(1-voidRatio,.01)),minEnvelopeSide=voxelSide/voidScale,maxEnvelopeSide=envelopeVolume/(minEnvelopeSide*minEnvelopeSide);return{voxelSide,minEnvelopeSide,maxEnvelopeSide}}
+    function lockedDims(){return dimKeys.filter(k=>state.locks[k])} function productDims(vals=state.values){return vals.length*vals.width*vals.height}
+    function enforceLocks(){const L=state.locks,last=state.lastChanged;let notes=[];if(L.parts&&L.weight&&L.balance){if(last==="balance"){L.weight=false;notes.push("Weight was unlocked because parts + weight + fixed balance over-constrain the model.")}else{L.balance=false;notes.push("Detail balance was unlocked so the calculator can satisfy both target parts and target weight.")}}if(L.length&&L.width&&L.height&&(L.parts||L.weight)){const unlockOrder=["height","width","length"],candidate=unlockOrder.find(k=>k!==last)||"height";L[candidate]=false;notes.push(`${labels[candidate]} was unlocked because three locked dimensions plus a locked target over-constrain the model.`)}if(notes.length)state.note=notes.join(" ")}
+    function solveDimensionsForEnvelope(envelopeVolume){const dims={length:finite(state.values.length,1),width:finite(state.values.width,1),height:finite(state.values.height,1)},limits=dimensionLimits(envelopeVolume,state.values.void),minSide=limits.minEnvelopeSide,maxSide=limits.maxEnvelopeSide,locked=lockedDims();if(locked.length===0){const side=Math.cbrt(envelopeVolume);dims.length=side;dims.width=side;dims.height=side;return{dims,limits,envelopeVolume}}for(const k of locked)dims[k]=clamp(dims[k],minSide,maxSide);if(locked.length===1){const a=locked[0],maxA=envelopeVolume/(minSide*minSide);dims[a]=clamp(dims[a],minSide,maxA);const rest=Math.sqrt(envelopeVolume/dims[a]),free=dimKeys.filter(k=>k!==a);dims[free[0]]=rest;dims[free[1]]=rest;return{dims,limits,envelopeVolume}}if(locked.length===2){const[a,b]=locked,free=dimKeys.find(k=>!locked.includes(k));let c=envelopeVolume/(dims[a]*dims[b]);if(c<minSide){const changed=state.lastChanged&&locked.includes(state.lastChanged)?state.lastChanged:b,other=changed===a?b:a;dims[changed]=envelopeVolume/(dims[other]*minSide);dims[changed]=clamp(dims[changed],minSide,maxSide);c=envelopeVolume/(dims[a]*dims[b]);state.note=`${labels[changed]} was clamped by the 6×6×6 voxel limit.`}dims[free]=c;return{dims,limits,envelopeVolume}}return{dims,limits,envelopeVolume:productDims(dims)}}
+    function updateControlRanges(model,dimsInfo){const limits=dimsInfo.limits,minDim=Math.max(.1,limits.minEnvelopeSide),maxDim=Math.max(minDim+.1,limits.maxEnvelopeSide);for(const k of dimKeys){const r=el(`${k}-range`),n=el(`${k}-number`);if(!r||!n)continue;r.min=minDim.toFixed(1);r.max=maxDim.toFixed(1);r.step=.1;n.min=minDim.toFixed(1);n.max=maxDim.toFixed(1);n.step=.1}const minParts=calcFromVolume(V_MIN,state.values.balance,state.values.void).parts,maxParts=calcFromVolume(V_MAX,state.values.balance,state.values.void).parts;el("parts-range").min=Math.floor(minParts);el("parts-range").max=Math.ceil(maxParts);el("parts-range").step=1;el("parts-number").min=Math.floor(minParts);el("parts-number").max=Math.ceil(maxParts);el("parts-number").step=1;const minWeight=calcFromVolume(V_MIN,state.values.balance,state.values.void).weight,maxWeight=calcFromVolume(V_MAX,state.values.balance,state.values.void).weight;el("weight-range").min=Math.floor(minWeight);el("weight-range").max=Math.ceil(maxWeight);el("weight-range").step=10;el("weight-number").min=Math.floor(minWeight);el("weight-number").max=Math.ceil(maxWeight);el("weight-number").step=10}
+    function solve(){enforceLocks();const voidPct=clamp(finite(state.values.void,50),0,90);state.values.void=voidPct;let balance=clamp(finite(state.values.balance,50),0,100);state.values.balance=balance;let occupiedVolume=state.currentOccupiedVolume,envelopeVolume=state.currentEnvelopeVolume,note=state.note;const dimsLocked=lockedDims(),targetsLocked=state.locks.parts||state.locks.weight;if(state.locks.parts&&state.locks.weight&&!state.locks.balance){const result=solveVolumeAndBalanceForPartsWeight(Math.max(1,finite(state.values.parts,1)),Math.max(1,finite(state.values.weight,1)),voidPct);occupiedVolume=result.volume;balance=result.balance;state.values.balance=balance;note="Detail balance was calculated from the locked part count and locked weight."}else if(state.locks.parts){occupiedVolume=solveVolumeForParts(Math.max(1,finite(state.values.parts,1)),balance);note="Occupied volume was calculated from locked target parts."}else if(state.locks.weight){occupiedVolume=solveVolumeForWeight(Math.max(1,finite(state.values.weight,1)),balance,voidPct);note="Occupied volume was calculated from locked target weight."}else if(dimsLocked.length===3){envelopeVolume=productDims(state.values);occupiedVolume=envelopeVolume*(1-voidPct/100);note="Occupied volume was calculated from the three locked dimensions."}else{occupiedVolume=state.currentOccupiedVolume;note=dimsLocked.length?"Envelope volume was preserved while unlocked dimensions adapted.":"No size or target is locked, so the current occupied volume is preserved."}envelopeVolume=occupiedVolume/Math.max(1-voidPct/100,.01);if(!targetsLocked&&dimsLocked.length>0&&dimsLocked.length<3){envelopeVolume=state.currentEnvelopeVolume;occupiedVolume=envelopeVolume*(1-voidPct/100)}let dimsInfo=solveDimensionsForEnvelope(envelopeVolume),dims=dimsInfo.dims;if(!targetsLocked&&dimsLocked.length===3){envelopeVolume=dims.length*dims.width*dims.height;occupiedVolume=envelopeVolume*(1-voidPct/100);dimsInfo={dims,limits:dimensionLimits(envelopeVolume,voidPct),envelopeVolume}}state.values.length=dims.length;state.values.width=dims.width;state.values.height=dims.height;const model=calcFromVolume(occupiedVolume,balance,voidPct);state.currentOccupiedVolume=occupiedVolume;state.currentEnvelopeVolume=model.envelopeVolume;state.values.parts=model.parts;state.values.weight=model.weight;const finalDimsInfo={dims,limits:dimensionLimits(model.envelopeVolume,voidPct),envelopeVolume:model.envelopeVolume};updateControlRanges(model,finalDimsInfo);writeControls();render(model,finalDimsInfo,note)}
+    function render(model,dimsInfo,note){const dims=dimsInfo.dims,limits=dimsInfo.limits;el("metricDims").textContent=`${fmt(dims.length,1)} × ${fmt(dims.width,1)} × ${fmt(dims.height,1)}`;el("metricDimsSub").textContent="cm envelope size";el("metricParts").textContent=fmtInt(model.parts);el("metricPartsSub").textContent=`${fmt(model.partsPer100,1)} parts / 100 occupied cm³`;el("metricWeight").textContent=fmtWeight(model.weight);el("metricWeightSub").textContent=`${pct(model.weightedFill)} effective fill`;el("metricBalance").textContent=`${fmt(state.values.balance,0)}%`;el("metricBalanceSub").textContent=`${pct(model.smallShare)} small dense volume share`;el("envVol").textContent=`${fmtInt(model.envelopeVolume)} cm³`;el("occVol").textContent=`${fmtInt(model.volume)} cm³`;el("voidOut").textContent=`${fmt(model.voidRatio*100,0)}%`;el("cubeSide").textContent=fmtCm(model.cubeSide);el("voxelSide").textContent=fmtCm(limits.voxelSide);el("minSide").textContent=fmtCm(limits.minEnvelopeSide);el("maxSide").textContent=fmtCm(limits.maxEnvelopeSide);el("smallShare").textContent=pct(model.smallShare);el("largeShare").textContent=pct(model.largeShare);el("cPart").textContent=`${fmt(model.cPart,2)} cm³ / part`;el("partsPer100").textContent=fmt(model.partsPer100,1);el("bearingSize").textContent=`${fmt(model.bearingSizeMm,1)} mm`;el("largeFill").textContent=pct(model.largeFill);el("weightedFill").textContent=pct(model.weightedFill);const lockList=keys.filter(k=>state.locks[k]).map(k=>labels[k]).join(", ")||"none";el("solverStatus").className="status good";el("solverStatus").innerHTML=`<b>${note}</b><span>Locked anchors: ${lockList}.</span>`;const balances=[0,25,50,75,100];el("sampleRows").innerHTML=balances.map(b=>{const sample=calcFromVolume(model.volume,b,state.values.void);return`<tr><td>${b}%</td><td>${pct(sample.smallShare,1)}</td><td>${fmtInt(sample.parts)}</td><td>${fmtWeight(sample.weight)}</td><td>${pct(sample.weightedFill,1)}</td></tr>`}).join("")}
+    function createControl(key,options={}){const parent=el(`control-${key}`),withLock=!options.noLock,value=state.values[key];parent.innerHTML=`${withLock?`<button id="${key}-lock" class="lock-btn" title="Lock / unlock">🔓</button>`:""}<div class="control-main"><div class="label-row"><span class="label">${labels[key]}</span><span class="hint">${hints[key]}</span></div><input id="${key}-range" type="range" /></div><input id="${key}-number" type="number" />`;const range=el(`${key}-range`),number=el(`${key}-number`);if(key==="void"){range.min=0;range.max=90;range.step=5;number.min=0;number.max=90;number.step=5}else if(key==="balance"){range.min=0;range.max=100;range.step=5;number.min=0;number.max=100;number.step=5}else{range.min=0;range.max=100;range.step=1;number.min=0;number.max=100;number.step=1}range.value=value;number.value=value;const onInput=raw=>{let v=finite(raw,state.values[key]);if(key==="void")v=clamp(Math.round(v/5)*5,0,90);if(key==="balance")v=clamp(Math.round(v/5)*5,0,100);state.values[key]=v;state.lastChanged=key;state.note=`${labels[key]} was changed.`;if(withLock)state.locks[key]=true;solve()};range.addEventListener("input",()=>onInput(range.value));number.addEventListener("change",()=>onInput(number.value));if(withLock){el(`${key}-lock`).addEventListener("click",()=>{state.locks[key]=!state.locks[key];state.lastChanged=`${key}Lock`;state.note=`${labels[key]} was ${state.locks[key]?"locked":"unlocked"}.`;solve()})}}
+    function writeControls(){for(const k of["length","width","height","parts","weight","void","balance"]){const range=el(`${k}-range`),number=el(`${k}-number`);if(!range||!number)continue;let value=state.values[k];if(k==="length"||k==="width"||k==="height")value=Number(value).toFixed(1);if(k==="parts"||k==="weight")value=Math.round(value);if(k==="void"||k==="balance")value=Math.round(value);range.value=value;number.value=value}for(const k of keys){const btn=el(`${k}-lock`);if(!btn)continue;btn.classList.toggle("locked",!!state.locks[k]);btn.textContent=state.locks[k]?"🔒":"🔓"}}
+    createControl("length");createControl("width");createControl("height");createControl("parts");createControl("weight");createControl("void",{noLock:true});createControl("balance");solve();
   </script>
 </body>
 </html>
