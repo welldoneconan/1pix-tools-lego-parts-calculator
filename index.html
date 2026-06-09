@@ -119,10 +119,10 @@
 <section class="doc-section"><h3>Formula explanation</h3><p>The calculator is based on a few connected estimation formulas. The goal is not to produce a perfect final bill of materials, but to create a fast planning estimate from incomplete information.</p></section>
 <section class="doc-section"><h3>1. Envelope volume</h3><p>The envelope volume is the outer bounding-box volume of the model.</p><p>Formula:</p><div class="formula">Length × Width × Height = Envelope Volume</div><p>Where:</p><ul><li>Length, width, and height are measured in centimeters.</li><li>Envelope volume is measured in cubic centimeters.</li><li>This is the full outer volume, including empty space inside or around the LEGO structure.</li></ul><p>Example:</p><p>A model that is 30 × 20 × 10 cm has:</p><div class="formula">30 × 20 × 10 = 6,000 cm³ envelope volume.</div></section>
 <section class="doc-section"><h3>2. Void and occupied LEGO volume</h3><p>Void is the percentage of the envelope volume that is empty space.</p><p>Formula:</p><div class="formula">Occupied Volume = Envelope Volume × (1 - Void)</div><p>Or, if the occupied LEGO volume is known:</p><div class="formula">Envelope Volume = Occupied Volume / (1 - Void)</div><p>Where:</p><ul><li>Void = 50% means 0.50.</li><li>Occupied volume means the part of the volume that is actually filled by LEGO structure.</li><li>Envelope volume means the full external bounding box.</li></ul><p>Example:</p><p>If the envelope volume is 6,000 cm³ and void is 50%:</p><div class="formula">Occupied Volume = 6,000 × (1 - 0.50) = 3,000 cm³</div><p>This means only half of the outer box is actually occupied by LEGO structure.</p></section>
-<section class="doc-section"><h3>3. Detail balance</h3><p>Detail balance controls how much of the occupied LEGO volume is made from small dense parts versus large hollow structural parts.</p><p>A low detail balance means the model is mostly large structural LEGO elements. This usually produces a lighter model with fewer parts.</p><p>A high detail balance means the model uses more small decorative or dense parts. This usually increases both part count and weight.</p><p>The calculator converts detail balance into a small-part volume share.</p><p>Conceptually:</p><div class="formula">Small Dense Volume Share = Base Small Share + Detail Balance × Detail Range</div><div class="formula">Large Structural Volume Share = 1 - Small Dense Volume Share</div><p>This does not mean that 50% detail balance equals 50% small parts. It means the model is halfway between a mostly structural build and a highly detailed small-part-heavy build.</p></section>
+<section class="doc-section"><h3>3. Detail balance</h3><p>Detail balance controls how much of the occupied LEGO volume is made from small dense parts versus large hollow structural parts.</p><p>A low detail balance means the model is mostly large structural LEGO elements. This usually produces a lighter model with fewer parts.</p><p>A high detail balance means the model uses more small decorative or dense parts. This usually increases both part count and weight.</p><p>The calculator converts detail balance into a small-part volume share.</p><p>Conceptually:</p><div class="formula">Small Dense Volume Share = Base Small Share + Detail Range × Detail Balance^1.6</div><div class="formula">Large Structural Volume Share = 1 - Small Dense Volume Share</div><p>This does not mean that 50% detail balance equals 50% small parts. The conversion is intentionally nonlinear: 50% detail balance produces a moderate small-part volume share, while 100% represents a very small-part-heavy build.</p></section>
 <section class="doc-section"><h3>4. Part count estimate</h3><p>Part count is estimated from occupied volume and detail balance.</p><p>The model is divided into two simplified groups:</p><ul><li>large structural parts;</li><li>small dense parts.</li></ul><p>Conceptual formula:</p><div class="formula">Estimated Parts = Occupied Volume × (Small Volume Share / Average Small Part Volume + Large Volume Share / Average Large Part Volume)</div><p>Small parts produce more pieces per cubic centimeter. Large parts produce fewer pieces per cubic centimeter.</p><p>This is why increasing detail balance increases the estimated part count even if the model dimensions stay the same.</p></section>
-<section class="doc-section"><h3>5. Weight estimate</h3><p>Weight is estimated from occupied LEGO volume, material density, and internal fill.</p><p>Formula:</p><div class="formula">Estimated Weight = Occupied Volume × Weighted Internal Fill × ABS Density</div><p>Where:</p><ul><li>Occupied Volume is the LEGO-occupied space in cm³.</li><li>Weighted Internal Fill estimates how much of that space is actual plastic.</li><li>ABS Density is the approximate density of LEGO plastic.</li><li>The calculator uses about 1.05 g/cm³ as a practical ABS density value.</li></ul><p>Large LEGO elements are treated as relatively hollow. Small LEGO elements are treated as denser.</p><p>So the weighted internal fill depends on detail balance:</p><div class="formula">Weighted Internal Fill = Small Volume Share × Small Part Fill + Large Volume Share × Large Part Fill</div><p>This is why a model with more small parts becomes heavier even when the outer dimensions remain the same.</p></section>
-<section class="doc-section"><h3>6. Large-part internal fill</h3><p>Large structural LEGO parts are not solid blocks. They contain walls, studs, tubes, holes, and empty space.</p><p>The calculator estimates their internal fill based on an effective structural size.</p><p>Conceptually:</p><div class="formula">Larger structural elements → lower internal fill<br/>Smaller elements → higher internal fill</div><p>This prevents the model from assuming that every cubic centimeter of occupied LEGO structure is solid plastic.</p></section>
+<section class="doc-section"><h3>5. Weight estimate</h3><p>Weight is estimated from occupied LEGO volume, material density, and internal fill.</p><p>Formula:</p><div class="formula">Estimated Weight = Occupied Volume × Weighted Internal Fill × ABS Density</div><p>Where:</p><ul><li>Occupied Volume is the LEGO-occupied space in cm³.</li><li>Weighted Internal Fill estimates how much of that space is actual plastic.</li><li>ABS Density is the approximate density of LEGO plastic.</li><li>The calculator uses about 1.05 g/cm³ as a practical ABS density value.</li></ul><p>Large LEGO elements are treated as relatively hollow. Small LEGO elements are treated as denser.</p><p>So the weighted internal fill depends on detail balance:</p><div class="formula">Weighted Internal Fill = Small Volume Share × 65% Small Part Fill + Large Volume Share × Large Part Fill</div><p>This is why a model with more small parts becomes heavier even when the outer dimensions remain the same.</p></section>
+<section class="doc-section"><h3>6. Large-part internal fill</h3><p>Large structural LEGO parts are not solid blocks. They contain walls, studs, tubes, holes, and empty space.</p><p>The calculator estimates their internal fill based on an effective structural size, but keeps it in a hollow-structure range rather than treating large elements as dense blocks.</p><p>Conceptually:</p><div class="formula">Larger structural elements → about 18–22% internal fill<br/>Smaller structural elements → about 25–30% internal fill</div><p>This prevents the model from assuming that every cubic centimeter of occupied LEGO structure is solid plastic.</p></section>
 <section class="doc-section"><h3>7. Working backwards from desired part count</h3><p>If the user enters a desired part count, the calculator works backwards.</p><p>It estimates the occupied volume needed to produce that number of parts using the current detail balance.</p><p>Then it applies void to calculate the outer envelope volume.</p><p>Then it converts that volume into dimensions.</p><p>Simplified logic:</p><div class="formula">Desired Parts → Required Occupied Volume → Envelope Volume → Length / Width / Height</div><p>This is useful when the project starts from a piece-count target rather than from dimensions.</p></section>
 <section class="doc-section"><h3>8. Working backwards from desired weight</h3><p>If the user enters a desired weight, the calculator also works backwards.</p><p>Formula:</p><div class="formula">Required Occupied Volume = Desired Weight / (Weighted Internal Fill × ABS Density)</div><p>Then:</p><div class="formula">Envelope Volume = Required Occupied Volume / (1 - Void)</div><p>Then the envelope volume is converted into dimensions.</p><p>Simplified logic:</p><div class="formula">Desired Weight → Required Occupied Volume → Envelope Volume → Length / Width / Height</div><p>This is useful when the project is limited by shipping weight, material cost, or packaging weight.</p></section>
 <section class="doc-section"><h3>9. Dimension solving</h3><p>When the calculator knows the target envelope volume but not all dimensions, it solves the missing dimensions automatically.</p><p>If no dimensions are fixed:</p><div class="formula">Length = Width = Height = cube root of Envelope Volume</div><p>If one dimension is fixed:</p><p>The other two dimensions are calculated equally.</p><div class="formula">Width = Height = square root of (Envelope Volume / Fixed Length)</div><p>If two dimensions are fixed:</p><p>The third dimension is calculated directly.</p><div class="formula">Height = Envelope Volume / (Length × Width)</div><p>This lets the calculator preserve total volume while adapting the unlocked dimensions.</p></section>
@@ -136,14 +136,23 @@
 <script>
 (function(){
   const ABS_DENSITY = 1.05;
-  const SMALL_SHARE_MIN = 0.05;
-  const SMALL_SHARE_MAX = 0.75;
+  // Recalibrated physical assumptions
+  // Detail balance is not a literal small-part volume share. It bends non-linearly:
+  // 0% ≈ coarse structural build, 50% ≈ moderate detailing, 100% ≈ very small-part-heavy.
+  const SMALL_SHARE_MIN = 0.02;
+  const SMALL_SHARE_MAX = 0.30;
+  const SMALL_SHARE_POWER = 1.6;
   const V_MIN = 20;
   const V_MAX = 200000;
   const BASE_VOXEL_MM = 8;
   const SMALL_PART_VOLUME = 0.65;
-  const INTERNAL_FILL_FLOOR = 0.20;
-  const INTERNAL_FILL_POWER = 0.85;
+  const SMALL_PART_FILL = 0.65;
+  const LARGE_PART_VOLUME_MIN = 3.0;
+  const LARGE_PART_VOLUME_BASE = 5.0;
+  const LARGE_PART_VOLUME_GROWTH = 3.5;
+  const LARGE_FILL_BASE = 0.18;
+  const LARGE_FILL_SCALE = 0.12;
+  const LARGE_FILL_POWER = 0.6;
   const MAX_BEARING_SIZE_MM = 128;
   const MIN_UNLOCKED = 2;
 
@@ -192,21 +201,27 @@
   }
 
   function smallShareFromBalance(balance) {
-    return SMALL_SHARE_MIN + (SMALL_SHARE_MAX - SMALL_SHARE_MIN) * (clamp(balance, 0, 100) / 100);
+    const t = clamp(balance, 0, 100) / 100;
+    return SMALL_SHARE_MIN + (SMALL_SHARE_MAX - SMALL_SHARE_MIN) * Math.pow(t, SMALL_SHARE_POWER);
   }
 
-  function progressiveCPart(volume) {
+  function progressiveCPart(volume, balance = 50) {
+    // Effective occupied volume represented by one large structural part.
+    // Coarse/low-detail builds get larger average structural parts; high-detail builds get smaller ones.
     const minVolume = 120;
-    const cMin = 2.4;
-    const cGrowth = 1.6;
     const refMax = 5000;
-    if (volume <= minVolume) return cMin;
-    return cMin + cGrowth * Math.log(volume / minVolume) / Math.log(refMax / minVolume);
+    const safeVolume = Math.max(volume, minVolume);
+    const logFactor = clamp(Math.log(safeVolume / minVolume) / Math.log(refMax / minVolume), 0, 1);
+    const baseLargePartVolume = LARGE_PART_VOLUME_BASE + LARGE_PART_VOLUME_GROWTH * logFactor;
+    const detailFactor = 1.25 - 0.5 * (clamp(balance, 0, 100) / 100);
+    return Math.max(LARGE_PART_VOLUME_MIN, baseLargePartVolume * detailFactor);
   }
 
   function internalFill(sizeMm) {
-    const raw = INTERNAL_FILL_FLOOR + (1 - INTERNAL_FILL_FLOOR) * Math.pow(BASE_VOXEL_MM / Math.max(sizeMm, 0.001), INTERNAL_FILL_POWER);
-    return clamp(raw, INTERNAL_FILL_FLOOR, 1);
+    // Effective plastic fill of large hollow structural elements.
+    // It intentionally stays much lower than solid plastic to match hollow LEGO bricks/plates.
+    const raw = LARGE_FILL_BASE + LARGE_FILL_SCALE * Math.pow(BASE_VOXEL_MM / Math.max(sizeMm, 0.001), LARGE_FILL_POWER);
+    return clamp(raw, LARGE_FILL_BASE, LARGE_FILL_BASE + LARGE_FILL_SCALE);
   }
 
   function calcFromVolume(volume, balance, voidPct) {
@@ -216,12 +231,12 @@
     const cubeSide = Math.cbrt(envelopeVolume);
     const smallShare = smallShareFromBalance(balance);
     const largeShare = 1 - smallShare;
-    const cPart = progressiveCPart(occupiedVolume);
+    const cPart = progressiveCPart(occupiedVolume, balance);
     const parts = occupiedVolume * (smallShare / SMALL_PART_VOLUME + largeShare / cPart);
     const partsPer100 = parts / occupiedVolume * 100;
     const bearingSizeMm = clamp(cubeSide * 10 / 3, BASE_VOXEL_MM, MAX_BEARING_SIZE_MM);
     const largeFill = internalFill(bearingSizeMm);
-    const weightedFill = smallShare * 1 + largeShare * largeFill;
+    const weightedFill = smallShare * SMALL_PART_FILL + largeShare * largeFill;
     const weight = occupiedVolume * weightedFill * ABS_DENSITY;
     return { volume: occupiedVolume, voidRatio, envelopeVolume, cubeSide, smallShare, largeShare, cPart, parts, partsPer100, bearingSizeMm, largeFill, weightedFill, weight };
   }
