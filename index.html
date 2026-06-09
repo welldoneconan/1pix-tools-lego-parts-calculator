@@ -155,6 +155,8 @@
   const LARGE_FILL_POWER = 0.6;
   const MAX_BEARING_SIZE_MM = 128;
   const MIN_UNLOCKED = 2;
+  const BEARING_STEP_MM = 0.25;
+  const BEARING_PART_POWER = 0.75;
 
   const keys = ["length", "width", "height", "parts", "weight", "void", "balance"];
   const dimKeys = ["length", "width", "height"];
@@ -224,29 +226,130 @@
     return clamp(raw, LARGE_FILL_BASE, LARGE_FILL_BASE + LARGE_FILL_SCALE);
   }
 
-  function calcFromVolume(volume, balance, voidPct) {
-    const voidRatio = clamp(voidPct / 100, 0, 0.9);
-    const occupiedVolume = clamp(volume, V_MIN, V_MAX);
-    const envelopeVolume = occupiedVolume / Math.max(1 - voidRatio, 0.01);
-    const cubeSide = Math.cbrt(envelopeVolume);
-    const smallShare = smallShareFromBalance(balance);
-    const largeShare = 1 - smallShare;
-    const cPart = progressiveCPart(occupiedVolume, balance);
-    const parts = occupiedVolume * (smallShare / SMALL_PART_VOLUME + largeShare / cPart);
-    const partsPer100 = parts / occupiedVolume * 100;
-    const bearingSizeMm = clamp(cubeSide * 10 / 3, BASE_VOXEL_MM, MAX_BEARING_SIZE_MM);
-    const largeFill = internalFill(bearingSizeMm);
-    const weightedFill = smallShare * SMALL_PART_FILL + largeShare * largeFill;
-    const weight = occupiedVolume * weightedFill * ABS_DENSITY;
-    return { volume: occupiedVolume, voidRatio, envelopeVolume, cubeSide, smallShare, largeShare, cPart, parts, partsPer100, bearingSizeMm, largeFill, weightedFill, weight };
-  }
+  function bearingLimitsForDims(dims, envelopeVolume) {
+  const cubeSideCm = Math.cbrt(Math.max(envelopeVolume, 0.001));
 
-  function modelFromValues(vals = state.values) {
-    const envelopeVolume = productDims(vals);
-    const voidPct = clamp(finite(vals.void, 50), 0, 90);
-    const occupiedVolume = envelopeVolume * Math.max(1 - voidPct / 100, 0.01);
-    return calcFromVolume(occupiedVolume, clamp(finite(vals.balance, 50), 0, 100), voidPct);
-  }
+  // Natural minimum: what the old cube-based model used as the default bearing.
+  const modelMaxMm = Math.max(dims.length, dims.width, dims.height) * 10;
+  const hardMaxMm = Math.max(BASE_VOXEL_MM, Math.min(MAX_BEARING_SIZE_MM, modelMaxMm));
+
+  const naturalMinMm = clamp(
+    cubeSideCm * 10 / 3,
+    BASE_VOXEL_MM,
+    hardMaxMm
+  );
+
+  return {
+    min: naturalMinMm,
+    max: hardMaxMm
+  };
+}
+
+function effectiveLargePartVolume(volume, balance, bearingSizeMm, naturalBearingMinMm) {
+  const base = progressiveCPart(volume, balance);
+
+  // Bearing can only increase coarse structural scale from the natural minimum.
+  // Larger bearing = fewer large structural parts for the same occupied volume.
+  const bearingRatio = Math.max(
+    1,
+    bearingSizeMm / Math.max(naturalBearingMinMm, BASE_VOXEL_MM)
+  );
+
+  return base * Math.pow(bearingRatio, BEARING_PART_POWER);
+}
+
+function calcFromGeometry(occupiedVolumeInput, balance, voidPct, dims, bearingSizeMm = null) {
+  const voidRatio = clamp(voidPct / 100, 0, 0.9);
+  const occupiedVolume = clamp(occupiedVolumeInput, V_MIN, V_MAX);
+  const envelopeVolume = productDims(dims);
+  const cubeSide = Math.cbrt(envelopeVolume);
+
+  const bearingLimits = bearingLimitsForDims(dims, envelopeVolume);
+  const chosenBearingSizeMm =
+    bearingSizeMm == null
+      ? bearingLimits.min
+      : clamp(bearingSizeMm, bearingLimits.min, bearingLimits.max);
+
+  const smallShare = smallShareFromBalance(balance);
+  const largeShare = 1 - smallShare;
+
+  const cPart = effectiveLargePartVolume(
+    occupiedVolume,
+    balance,
+    chosenBearingSizeMm,
+    bearingLimits.min
+  );
+
+  const parts = occupiedVolume * (
+    smallShare / SMALL_PART_VOLUME +
+    largeShare / cPart
+  );
+
+  const partsPer100 = parts / occupiedVolume * 100;
+
+  const largeFill = internalFill(chosenBearingSizeMm);
+  const weightedFill = smallShare * SMALL_PART_FILL + largeShare * largeFill;
+  const weight = occupiedVolume * weightedFill * ABS_DENSITY;
+
+  return {
+    volume: occupiedVolume,
+    voidRatio,
+    envelopeVolume,
+    cubeSide,
+    smallShare,
+    largeShare,
+    cPart,
+    parts,
+    partsPer100,
+    bearingSizeMm: chosenBearingSizeMm,
+    bearingMinMm: bearingLimits.min,
+    bearingMaxMm: bearingLimits.max,
+    largeFill,
+    weightedFill,
+    weight
+  };
+}
+
+function calcFromVolume(volume, balance, voidPct, bearingSizeMm = null) {
+  const voidRatio = clamp(voidPct / 100, 0, 0.9);
+  const occupiedVolume = clamp(volume, V_MIN, V_MAX);
+  const envelopeVolume = occupiedVolume / Math.max(1 - voidRatio, 0.01);
+  const cubeSide = Math.cbrt(envelopeVolume);
+
+  const cubeDims = {
+    length: cubeSide,
+    width: cubeSide,
+    height: cubeSide
+  };
+
+  return calcFromGeometry(
+    occupiedVolume,
+    balance,
+    voidPct,
+    cubeDims,
+    bearingSizeMm
+  );
+}
+
+function modelFromValues(vals = state.values) {
+  const dims = {
+    length: finite(vals.length, 1),
+    width: finite(vals.width, 1),
+    height: finite(vals.height, 1)
+  };
+
+  const envelopeVolume = productDims(dims);
+  const voidPct = clamp(finite(vals.void, 50), 0, 90);
+  const occupiedVolume = envelopeVolume * Math.max(1 - voidPct / 100, 0.01);
+
+  return calcFromGeometry(
+    occupiedVolume,
+    clamp(finite(vals.balance, 50), 0, 100),
+    voidPct,
+    dims,
+    null
+  );
+}
 
   function dimensionLimitsFromOccupied(occupiedVolume, voidPct) {
     const voidRatio = clamp(voidPct / 100, 0, 0.9);
