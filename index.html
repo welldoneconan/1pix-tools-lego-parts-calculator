@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LEGO Model Weight & Detail Estimator</title>
+  <style>
+    :root {
+      --bg: #0f172a; --panel: #111827; --card: #111c33; --text: #e5e7eb; --muted: #94a3b8;
+      --line: rgba(148,163,184,.24); --blue:#38bdf8; --green:#34d399; --purple:#a78bfa; --orange:#fb923c; --pink:#fb7185; --yellow:#facc15;
+    }
+    *{box-sizing:border-box} body{margin:0;min-height:100vh;background:radial-gradient(circle at 10% 0%,rgba(56,189,248,.2),transparent 32rem),radial-gradient(circle at 90% 0%,rgba(251,113,133,.16),transparent 30rem),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}
+    .wrap{max-width:1180px;margin:0 auto;padding:32px 20px 48px} h1{margin:0 0 8px;font-size:clamp(30px,4vw,48px);letter-spacing:-.04em;line-height:1.05}.subtitle{color:var(--muted);max-width:820px;margin:0 0 22px}.grid{display:grid;grid-template-columns:380px 1fr;gap:18px;align-items:start}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.22)}.head{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}.head h2{margin:0;font-size:15px}.pill{font-size:11px;color:#0b1220;background:var(--blue);padding:4px 9px;border-radius:999px;font-weight:800}.body{padding:18px}
+    label{display:grid;gap:6px;color:var(--muted);font-size:13px;margin-bottom:13px}input,select{width:100%;border:1px solid rgba(148,163,184,.28);background:#1e293b;color:var(--text);border-radius:12px;padding:11px 12px;font-size:15px;outline:none}input:focus,select:focus{border-color:rgba(96,165,250,.85);box-shadow:0 0 0 3px rgba(96,165,250,.15)}.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hint,.note{font-size:12px;color:var(--muted)}
+    .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:18px}@media(max-width:700px){.metrics,.row2{grid-template-columns:1fr}}.metric{background:rgba(15,23,42,.62);border:1px solid var(--line);border-radius:16px;padding:14px}.metric .label{color:var(--muted);font-size:12px;margin-bottom:8px}.metric .value{font-size:25px;font-weight:850;letter-spacing:-.04em}.metric .sub{font-size:12px;color:var(--muted);margin-top:5px}
+    .group{border:1px solid var(--line);border-radius:15px;overflow:hidden;margin-bottom:12px}.glabel{padding:9px 12px;font-size:12px;font-weight:850;color:#0b1220}.geo .glabel{background:var(--blue)}.parts .glabel{background:var(--green)}.bearing .glabel{background:var(--purple)}.weight .glabel{background:var(--pink)}.gcontent{padding:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;background:rgba(15,23,42,.45)}.kv{border:1px solid rgba(148,163,184,.16);border-radius:12px;padding:10px;background:rgba(255,255,255,.025)}.kv .k{color:var(--muted);font-size:11px;margin-bottom:4px}.kv .v{font-weight:850}
+    .status{padding:13px 14px;border-radius:14px;background:rgba(255,255,255,.045);border:1px solid var(--line);margin-top:10px}.status b{display:block;margin-bottom:4px}.status.good{border-color:rgba(34,197,94,.55)}.status.warn{border-color:rgba(245,158,11,.58)}.status.bad{border-color:rgba(239,68,68,.62)}.small{font-size:12px;color:var(--muted)}
+    .section-title{margin:18px 0 10px;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:800}table{width:100%;border-collapse:collapse;font-size:13px;overflow:hidden;border-radius:14px}th,td{text-align:right;padding:10px 9px;border-bottom:1px solid rgba(148,163,184,.15);white-space:nowrap}th:first-child,td:first-child{text-align:left}thead th{color:#dbeafe;background:rgba(96,165,250,.13);font-size:12px}tbody tr:hover td{background:rgba(255,255,255,.035)}.overflow{overflow:auto}.footer{margin-top:18px;color:var(--muted);font-size:12px}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>LEGO Model Weight & Detail Estimator</h1>
+    <p class="subtitle">Estimate LEGO part count and weight from occupied LEGO volume, external void ratio, and detail density. This is a geometric estimator, not a BrickLink weight lookup.</p>
+
+    <section class="grid">
+      <aside class="card">
+        <div class="head"><h2>Inputs</h2><span class="pill">cm³ / mm / g</span></div>
+        <div class="body">
+          <label>Occupied LEGO volume, cm³<input id="occupiedVolume" type="number" min="1" step="1" value="19458"><span class="hint">Volume occupied by LEGO parts before adding external voids.</span></label>
+          <label>External void, %<input id="externalVoid" type="number" min="0" max="95" step="0.1" value="79.1"></label>
+          <label>Detail level<select id="detailLevel"><option value="smooth">Smooth / structural</option><option value="medium">Medium detail</option><option value="detailed" selected>Detailed / dense decoration</option></select></label>
+          <div class="row2"><label>Actual parts<input id="actualParts" type="number" min="0" step="1" value="10073"></label><label>Stud.io weight, g<input id="studioWeight" type="number" min="0" step="1" value="9000"></label></div>
+          <div class="row2"><label>Min reference volume<input id="minVolume" type="number" min="1" step="1" value="120"></label><label>ABS density, g/cm³<input id="absDensity" type="number" min="0.1" step="0.01" value="1.05"></label></div>
+          <p class="note">Small details are treated as denser. Large bearing parts are treated as more hollow. Bearing size = cube side / 3, capped at 128 mm.</p>
+        </div>
+      </aside>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">Estimated weight</div><div class="value" id="mainWeight">—</div><div class="sub" id="mainWeightSub">—</div></div>
+          <div class="metric"><div class="label">Recommended average parts</div><div class="value" id="mainParts">—</div><div class="sub" id="mainPartsSub">—</div></div>
+          <div class="metric"><div class="label">Weighted internal fill</div><div class="value" id="mainFill">—</div><div class="sub">Effective plastic inside occupied LEGO volume</div></div>
+        </div>
+
+        <div class="card"><div class="head"><h2>Calculated groups</h2><span class="pill">live formulas</span></div><div class="body">
+          <div class="group geo"><div class="glabel">Geometry</div><div class="gcontent"><div class="kv"><div class="k">Envelope volume</div><div class="v" id="envelopeVolume">—</div></div><div class="kv"><div class="k">Cube side with void</div><div class="v" id="cubeSide">—</div></div><div class="kv"><div class="k">Cube side no void</div><div class="v" id="cubeSideNoVoid">—</div></div><div class="kv"><div class="k">External void</div><div class="v" id="voidValue">—</div></div></div></div>
+          <div class="group parts"><div class="glabel">Progressive part count</div><div class="gcontent"><div class="kv"><div class="k">Progressive C_part</div><div class="v" id="cPart">—</div></div><div class="kv"><div class="k">Parts per 100 cm³</div><div class="v" id="partsDensity">—</div></div><div class="kv"><div class="k">Average parts</div><div class="v" id="avgParts">—</div></div><div class="kv"><div class="k">Actual C_part</div><div class="v" id="actualCPart">—</div></div></div></div>
+          <div class="group bearing"><div class="glabel">Bearing part size</div><div class="gcontent"><div class="kv"><div class="k">Raw bearing size</div><div class="v" id="bearingRaw">—</div></div><div class="kv"><div class="k">Capped bearing size</div><div class="v" id="bearingSize">—</div></div><div class="kv"><div class="k">Bearing fill</div><div class="v" id="bearingFill">—</div></div><div class="kv"><div class="k">Medium fill, 32 mm</div><div class="v" id="mediumFill">—</div></div></div></div>
+          <div class="group weight"><div class="glabel">Estimated weights by detail mix</div><div class="gcontent"><div class="kv"><div class="k">Smooth</div><div class="v" id="smoothWeight">—</div></div><div class="kv"><div class="k">Medium</div><div class="v" id="mediumWeight">—</div></div><div class="kv"><div class="k">Detailed</div><div class="v" id="detailedWeight">—</div></div><div class="kv"><div class="k">Stud.io effective fill</div><div class="v" id="studioFill">—</div></div></div></div>
+          <div id="partsStatus" class="status">—</div><div id="weightStatus" class="status">—</div>
+          <div class="section-title">Void comparison</div><div class="overflow"><table><thead><tr><th>Void</th><th>Cube side</th><th>Bearing size</th><th>Smooth kg</th><th>Medium kg</th><th>Detailed kg</th></tr></thead><tbody id="voidRows"></tbody></table></div>
+          <p class="footer">“Occupied LEGO volume” is not the full visible model envelope. It is the volume occupied by LEGO parts before the model is expanded by exterior voids such as rooms, open frame structure, gaps, and hollow space.</p>
+        </div></div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const clamp = (v,min,max)=>Math.min(max,Math.max(min,v));
+    const num = (v,d=0)=>{const n=Number(v);return Number.isFinite(n)?n:d};
+    const fmt=(v,d=1)=>Number.isFinite(v)?v.toLocaleString(undefined,{maximumFractionDigits:d,minimumFractionDigits:d}):'—';
+    const fmtInt=v=>Number.isFinite(v)?Math.round(v).toLocaleString():'—';
+    const fmtWeight=g=>!Number.isFinite(g)?'—':g>=1000?`${fmt(g/1000,2)} kg`:`${fmt(g,0)} g`;
+    const fill=(size,base,floor,power)=>clamp(floor+(1-floor)*Math.pow(base/Math.max(size,.0001),power),floor,1);
+    const mixes={smooth:{label:'Smooth / structural',bearing:.85,medium:.10,small:.05},medium:{label:'Medium detail',bearing:.70,medium:.20,small:.10},detailed:{label:'Detailed / dense decoration',bearing:.65,medium:.15,small:.20}};
+    function calcVoid(V,voidRatio,abs,c,mix){
+      const envelope=V/Math.max(1-voidRatio,.01), cube=Math.cbrt(envelope), cube0=Math.cbrt(V);
+      const rawBearing=cube*10/3, bearing=Math.min(c.maxBearingSizeMm,Math.max(c.baseVoxelMm,rawBearing));
+      const smallFill=fill(c.smallPartSizeMm,c.baseVoxelMm,c.internalFillFloor,c.internalFillPower);
+      const mediumFill=fill(c.mediumPartSizeMm,c.baseVoxelMm,c.internalFillFloor,c.internalFillPower);
+      const bearingFill=fill(bearing,c.baseVoxelMm,c.internalFillFloor,c.internalFillPower);
+      const smooth=mixes.smooth.bearing*bearingFill+mixes.smooth.medium*mediumFill+mixes.smooth.small*smallFill;
+      const medium=mixes.medium.bearing*bearingFill+mixes.medium.medium*mediumFill+mixes.medium.small*smallFill;
+      const detailed=mixes.detailed.bearing*bearingFill+mixes.detailed.medium*mediumFill+mixes.detailed.small*smallFill;
+      const selected=mix.bearing*bearingFill+mix.medium*mediumFill+mix.small*smallFill;
+      return {envelope,cube,cube0,rawBearing,bearing,smallFill,mediumFill,bearingFill,smooth,medium,detailed,selected,smoothW:V*smooth*abs,mediumW:V*medium*abs,detailedW:V*detailed*abs,selectedW:V*selected*abs};
+    }
+    function partClass(actual,avg){if(!actual||actual<=0)return['','Actual parts not provided','Enter actual parts to compare detail level.'];const r=actual/avg;if(r<.75)return['bad','Under-detailed / economy or weak',`Actual parts are ${fmt(r*100,0)}% of the average recommendation.`];if(r<=1.25)return['good','Normal detail',`Actual parts are ${fmt(r*100,0)}% of the average recommendation.`];if(r<=1.75)return['warn','High detail',`Actual parts are ${fmt(r*100,0)}% of the average recommendation.`];return['bad','Over-detailed',`Actual parts are ${fmt(r*100,0)}% of the average recommendation.`]}
+    function weightClass(w,V,abs){if(!w||w<=0)return['','Stud.io weight not provided','Enter Stud.io weight to compare effective internal fill.'];const f=w/(V*abs);if(f<.25)return['warn','Very light / hollow mix',`Effective internal fill is ${fmt(f*100,1)}%.`];if(f<=.35)return['good','Hollow / structural mix',`Effective internal fill is ${fmt(f*100,1)}%.`];if(f<=.45)return['good','Medium detail mix',`Effective internal fill is ${fmt(f*100,1)}%.`];if(f<=.60)return['warn','Dense / detailed mix',`Effective internal fill is ${fmt(f*100,1)}%.`];return['bad','Very dense small-part mix',`Effective internal fill is ${fmt(f*100,1)}%.`]}
+    function update(){
+      const V=Math.max(1,num($('occupiedVolume').value,1)), voidPct=clamp(num($('externalVoid').value,75),0,95), voidRatio=voidPct/100;
+      const actual=num($('actualParts').value,0), studio=num($('studioWeight').value,0), abs=Math.max(.1,num($('absDensity').value,1.05)), minV=Math.max(1,num($('minVolume').value,120));
+      const c={baseVoxelMm:8,mediumPartSizeMm:32,smallPartSizeMm:8,maxBearingSizeMm:128,internalFillFloor:.20,internalFillPower:.85};
+      const selected=mixes[$('detailLevel').value];
+      const cPart=2.4+1.6*(Math.log(Math.max(V,minV)/minV)/Math.log(5000/minV));
+      const avgParts=V/cPart, partsPer100=100/cPart, r=calcVoid(V,voidRatio,abs,c,selected);
+      $('mainWeight').textContent=fmtWeight(r.selectedW);$('mainWeightSub').textContent=selected.label;$('mainParts').textContent=fmtInt(avgParts);$('mainPartsSub').textContent=`${fmt(partsPer100,1)} parts / 100 cm³`;$('mainFill').textContent=`${fmt(r.selected*100,1)}%`;
+      $('envelopeVolume').textContent=`${fmtInt(r.envelope)} cm³`;$('cubeSide').textContent=`${fmt(r.cube,1)} cm`;$('cubeSideNoVoid').textContent=`${fmt(r.cube0,1)} cm`;$('voidValue').textContent=`${fmt(voidPct,1)}%`;
+      $('cPart').textContent=`${fmt(cPart,2)} cm³ / part`;$('partsDensity').textContent=fmt(partsPer100,1);$('avgParts').textContent=fmtInt(avgParts);$('actualCPart').textContent=actual>0?`${fmt(V/actual,2)} cm³ / part`:'—';
+      $('bearingRaw').textContent=`${fmt(r.rawBearing,1)} mm`;$('bearingSize').textContent=`${fmt(r.bearing,1)} mm`;$('bearingFill').textContent=`${fmt(r.bearingFill*100,1)}%`;$('mediumFill').textContent=`${fmt(r.mediumFill*100,1)}%`;
+      $('smoothWeight').textContent=fmtWeight(r.smoothW);$('mediumWeight').textContent=fmtWeight(r.mediumW);$('detailedWeight').textContent=fmtWeight(r.detailedW);$('studioFill').textContent=studio>0?`${fmt(studio/(V*abs)*100,1)}%`:'—';
+      const [pc,pt,px]=partClass(actual,avgParts);$('partsStatus').className=`status ${pc}`;$('partsStatus').innerHTML=`<b>${pt}</b><span class="small">${px}</span>`;
+      const [wc,wt,wx]=weightClass(studio,V,abs);$('weightStatus').className=`status ${wc}`;$('weightStatus').innerHTML=`<b>${wt}</b><span class="small">${wx}</span>`;
+      $('voidRows').innerHTML=[0,25,50,75,85].map(v=>{const x=calcVoid(V,v/100,abs,c,selected);return `<tr><td>${v}%</td><td>${fmt(x.cube,1)} cm</td><td>${fmt(x.bearing,1)} mm</td><td>${fmt(x.smoothW/1000,2)}</td><td>${fmt(x.mediumW/1000,2)}</td><td>${fmt(x.detailedW/1000,2)}</td></tr>`}).join('');
+    }
+    document.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',update));update();
+  </script>
+</body>
+</html>
