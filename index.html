@@ -495,19 +495,96 @@ function modelFromValues(vals = state.values) {
     return true;
   }
 
-  function pushState(states, occupiedVolume, voidPct, balance, anchors) {
-    if (!Number.isFinite(occupiedVolume) || occupiedVolume < V_MIN || occupiedVolume > V_MAX) return;
-    if (!Number.isFinite(voidPct) || voidPct < -1e-6 || voidPct > 90 + 1e-6) return;
-    if (!Number.isFinite(balance) || balance < -1e-6 || balance > 100 + 1e-6) return;
-    const v = clamp(voidPct, 0, 90);
-    const b = clamp(balance, 0, 100);
-    const model = calcFromVolume(occupiedVolume, b, v);
-    const dims = dimsFromEnvelope(model.envelopeVolume, model.volume, v, anchors);
-    if (!dims) return;
-    const s = { length: dims.length, width: dims.width, height: dims.height, void: v, balance: b, parts: model.parts, weight: model.weight, model };
-    if (!targetMatches(s, anchors)) return;
-    states.push(s);
+  function chooseMinimalFeasibleBearing(occupiedVolume, voidPct, balance, dims, anchors) {
+  const envelopeVolume = productDims(dims);
+  const limits = bearingLimitsForDims(dims, envelopeVolume);
+
+  const hasPartsTarget = Object.prototype.hasOwnProperty.call(anchors, "parts");
+  const hasWeightTarget = Object.prototype.hasOwnProperty.call(anchors, "weight");
+
+  // If there is no parts/weight constraint, bearing stays at its natural minimum.
+  if (!hasPartsTarget && !hasWeightTarget) {
+    return limits.min;
   }
+
+  for (
+    let bearing = limits.min;
+    bearing <= limits.max + 1e-9;
+    bearing += BEARING_STEP_MM
+  ) {
+    const model = calcFromGeometry(
+      occupiedVolume,
+      balance,
+      voidPct,
+      dims,
+      bearing
+    );
+
+    const candidate = {
+      length: dims.length,
+      width: dims.width,
+      height: dims.height,
+      void: voidPct,
+      balance,
+      parts: model.parts,
+      weight: model.weight,
+      model
+    };
+
+    if (targetMatches(candidate, anchors)) {
+      return bearing;
+    }
+  }
+
+  return null;
+}
+
+  function pushState(states, occupiedVolume, voidPct, balance, anchors) {
+  if (!Number.isFinite(occupiedVolume) || occupiedVolume < V_MIN || occupiedVolume > V_MAX) return;
+  if (!Number.isFinite(voidPct) || voidPct < -1e-6 || voidPct > 90 + 1e-6) return;
+  if (!Number.isFinite(balance) || balance < -1e-6 || balance > 100 + 1e-6) return;
+
+  const v = clamp(voidPct, 0, 90);
+  const b = clamp(balance, 0, 100);
+
+  const envelopeVolume = occupiedVolume / Math.max(1 - v / 100, 0.01);
+  const dims = dimsFromEnvelope(envelopeVolume, occupiedVolume, v, anchors);
+  if (!dims) return;
+
+  const bearingSizeMm = chooseMinimalFeasibleBearing(
+    occupiedVolume,
+    v,
+    b,
+    dims,
+    anchors
+  );
+
+  if (bearingSizeMm == null) return;
+
+  const model = calcFromGeometry(
+    occupiedVolume,
+    b,
+    v,
+    dims,
+    bearingSizeMm
+  );
+
+  const s = {
+    length: dims.length,
+    width: dims.width,
+    height: dims.height,
+    void: v,
+    balance: b,
+    parts: model.parts,
+    weight: model.weight,
+    bearingSizeMm,
+    model
+  };
+
+  if (!targetMatches(s, anchors)) return;
+
+  states.push(s);
+}
 
   function buildValidStates(anchors, precise = true) {
     const states = [];
@@ -519,23 +596,14 @@ function modelFromValues(vals = state.values) {
     const fixedEnvelope = allDimsFixed ? anchors.length * anchors.width * anchors.height : null;
 
     if (allDimsFixed) {
-      if (hasParts) {
-        for (const b of balances) {
-          const v = Object.prototype.hasOwnProperty.call(anchors, 'void') ? anchors.void : solveVoidForFixedEnvelopeByParts(fixedEnvelope, b, anchors.parts);
-          if (v == null) continue;
-          pushState(states, fixedEnvelope * (1 - v / 100), v, b, anchors);
-        }
-      } else if (hasWeight) {
-        for (const b of balances) {
-          const v = Object.prototype.hasOwnProperty.call(anchors, 'void') ? anchors.void : solveVoidForFixedEnvelopeByWeight(fixedEnvelope, b, anchors.weight);
-          if (v == null) continue;
-          pushState(states, fixedEnvelope * (1 - v / 100), v, b, anchors);
-        }
-      } else {
-        for (const v of voids) for (const b of balances) pushState(states, fixedEnvelope * (1 - v / 100), v, b, anchors);
-      }
-      return states;
+  for (const v of voids) {
+    for (const b of balances) {
+      const occupied = fixedEnvelope * (1 - v / 100);
+      pushState(states, occupied, v, b, anchors);
     }
+  }
+  return states;
+}
 
     if (hasParts) {
       for (const b of balances) {
@@ -701,7 +769,9 @@ function modelFromValues(vals = state.values) {
     el("largeShare").textContent = pct(model.largeShare);
     el("cPart").textContent = `${fmt(model.cPart, 2)} cm³ / part`;
     el("partsPer100").textContent = fmt(model.partsPer100, 1);
-    el("bearingSize").textContent = `${fmt(model.bearingSizeMm, 1)} mm`;
+    el("bearingSize").textContent =
+  `${fmt(model.bearingSizeMm, 1)} mm ` +
+  `(min ${fmt(model.bearingMinMm, 1)}, max ${fmt(model.bearingMaxMm, 1)})`;
     el("largeFill").textContent = pct(model.largeFill);
     el("weightedFill").textContent = pct(model.weightedFill);
     const lockList = keys.filter(k => state.locks[k]).map(k => labels[k]).join(", ") || "none";
@@ -709,7 +779,13 @@ function modelFromValues(vals = state.values) {
     el("solverStatus").innerHTML = `<b>${note}</b><span>Locked anchors: ${lockList}. Active driver: ${state.lastChanged ? labels[state.lastChanged] : "none"}. At least two parameters remain unlocked.</span>`;
     const balances = [0, 25, 50, 75, 100];
     el("sampleRows").innerHTML = balances.map(b => {
-      const sample = calcFromVolume(model.volume, b, state.values.void);
+      const sample = calcFromGeometry(
+  model.volume,
+  b,
+  state.values.void,
+  dims,
+  null
+);
       return `<tr><td>${b}%</td><td>${pct(sample.smallShare, 1)}</td><td>${fmtInt(sample.parts)}</td><td>${fmtWeight(sample.weight)}</td><td>${pct(sample.weightedFill, 1)}</td></tr>`;
     }).join("");
     renderDescription(dims, model);
