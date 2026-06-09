@@ -7,6 +7,9 @@
   <style>
     :root { --bg:#0f172a; --line:rgba(148,163,184,.22); --text:#e5e7eb; --muted:#94a3b8; --accent:#60a5fa; --green:#34d399; --yellow:#facc15; --orange:#fb923c; --purple:#a78bfa; --input:#111827; --locked:#facc15; --unlocked:#64748b; }
     *{box-sizing:border-box} body{margin:0;min-height:100vh;background:radial-gradient(circle at top left,rgba(96,165,250,.25),transparent 34rem),radial-gradient(circle at top right,rgba(167,139,250,.14),transparent 38rem),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}.wrap{max-width:1260px;margin:0 auto;padding:30px 18px 48px}.hero{display:grid;gap:8px;margin-bottom:18px}h1{margin:0;font-size:clamp(28px,4vw,46px);line-height:1.05;letter-spacing:-.04em}.subtitle{margin:0;color:var(--muted);max-width:900px;font-size:14px}.layout{display:grid;grid-template-columns:minmax(360px,430px) minmax(0,1fr);gap:16px;align-items:start}@media(max-width:980px){.layout{grid-template-columns:1fr}}.card{border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.025));box-shadow:0 24px 80px rgba(0,0,0,.22);overflow:hidden}.card-header{padding:15px 17px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}.card-header h2{margin:0;font-size:15px}.card-body{padding:16px}.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;color:#0b1220;background:var(--accent);font-size:11px;font-weight:800;white-space:nowrap}.section-title{margin:18px 0 10px;color:var(--muted);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.14em}.section-title:first-child{margin-top:0}.control{display:grid;grid-template-columns:30px 1fr 92px;gap:9px;align-items:center;padding:10px;border:1px solid rgba(148,163,184,.16);border-radius:14px;background:rgba(15,23,42,.42);margin-bottom:9px}.control.assumption{grid-template-columns:1fr 92px}.lock-btn{width:30px;height:30px;display:grid;place-items:center;border:1px solid rgba(148,163,184,.25);border-radius:10px;background:rgba(255,255,255,.04);color:var(--unlocked);cursor:pointer;font-size:15px;line-height:1}.lock-btn.locked{color:#0b1220;background:var(--locked);border-color:var(--locked)}.control-main{display:grid;gap:5px;min-width:0}.label-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px}.label{font-size:13px;font-weight:750}.hint{font-size:11px;color:var(--muted);white-space:nowrap}input[type=range]{width:100%;accent-color:var(--accent);margin:0}input[type=number]{width:100%;border:1px solid rgba(148,163,184,.25);background:var(--input);color:var(--text);border-radius:11px;padding:8px 8px;font-size:13px;text-align:right;outline:none}input[type=number]:focus{border-color:rgba(96,165,250,.75);box-shadow:0 0 0 3px rgba(96,165,250,.15)}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}@media(max-width:760px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:460px){.metrics{grid-template-columns:1fr}}.metric{min-height:92px;padding:13px;border:1px solid var(--line);border-radius:16px;background:rgba(15,23,42,.55)}.metric .k{color:var(--muted);font-size:11px;margin-bottom:7px}.metric .v{font-size:23px;font-weight:900;letter-spacing:-.035em;white-space:nowrap}.metric .s{margin-top:4px;color:var(--muted);font-size:11px}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}@media(max-width:760px){.grid2{grid-template-columns:1fr}}.group{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:rgba(15,23,42,.36)}.group-title{padding:9px 12px;color:#0b1220;font-size:12px;font-weight:900}.blue{background:var(--accent)}.green{background:var(--green)}.orange{background:var(--orange)}.purple{background:var(--purple)}.yellow{background:var(--yellow)}.group-body{padding:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kv{border:1px solid rgba(148,163,184,.15);border-radius:12px;background:rgba(255,255,255,.025);padding:9px;min-width:0}.kv .k{color:var(--muted);font-size:11px;margin-bottom:4px}.kv .v{font-size:14px;font-weight:850;word-break:break-word}.status{margin-top:12px;padding:12px 13px;border:1px solid var(--line);border-radius:14px;color:var(--muted);background:rgba(15,23,42,.5);font-size:12px}.status b{display:block;color:var(--text);margin-bottom:4px;font-size:13px}.status.good{border-color:rgba(52,211,153,.55)}table{width:100%;border-collapse:collapse;font-size:12px;overflow:hidden;border-radius:14px;margin-top:12px}th,td{padding:9px 8px;border-bottom:1px solid rgba(148,163,184,.13);text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}th{color:#dbeafe;background:rgba(96,165,250,.13);font-weight:800}tbody tr:hover td{background:rgba(255,255,255,.035)}.small-note{margin:12px 0 0;color:var(--muted);font-size:11px}.lock-help{display:grid;gap:6px;color:var(--muted);font-size:12px}.lock-help b{color:var(--text)}
+
+    .tab-nav{position:sticky;top:0;z-index:50;margin:18px 0 18px;padding:10px;border:1px solid rgba(148,163,184,.32);border-radius:18px;background:rgba(15,23,42,.92);backdrop-filter:blur(14px);box-shadow:0 18px 60px rgba(0,0,0,.28);display:flex;align-items:center;gap:10px;flex-wrap:wrap}.tab-nav-label{font-size:11px;font-weight:950;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding:0 4px}.tab-btn{appearance:none;border:1px solid rgba(148,163,184,.28);border-radius:999px;background:rgba(255,255,255,.045);color:var(--text);padding:10px 15px;font-weight:900;font-size:13px;cursor:pointer;transition:.16s ease;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}.tab-btn:hover{border-color:rgba(96,165,250,.7);background:rgba(96,165,250,.14)}.tab-btn.active{background:var(--accent);border-color:var(--accent);color:#07111f;box-shadow:0 10px 30px rgba(96,165,250,.26)}.tab-page{display:none}.tab-page.active{display:block}.doc-card{border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.025));box-shadow:0 24px 80px rgba(0,0,0,.22);overflow:hidden}.doc-card-header{padding:18px 20px;border-bottom:1px solid var(--line)}.doc-card-header h2{margin:0;font-size:24px;letter-spacing:-.035em}.doc-card-header p{margin:6px 0 0;color:var(--muted);font-size:13px;max-width:860px}.doc-body{padding:20px;display:grid;gap:14px}.doc-section{padding:16px;border:1px solid rgba(148,163,184,.16);border-radius:16px;background:rgba(15,23,42,.42)}.doc-section h3{margin:0 0 8px;font-size:16px;letter-spacing:-.02em}.doc-section p{margin:0 0 10px;color:var(--muted);font-size:13px;line-height:1.55}.doc-section p:last-child{margin-bottom:0}.doc-section ul{margin:8px 0 0 18px;color:var(--muted);font-size:13px;line-height:1.55;padding:0}.formula{margin:9px 0;padding:10px 12px;border-radius:12px;background:rgba(2,6,23,.6);border:1px solid rgba(148,163,184,.16);font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;color:#dbeafe;font-size:12px;overflow:auto}.doc-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}@media(max-width:840px){.doc-two{grid-template-columns:1fr}.tab-nav{position:static}.tab-btn{flex:1;min-width:170px}}
+
   </style>
 </head>
 <body>
@@ -16,6 +19,14 @@
       <p class="subtitle">Move any slider to drive the model. Locked values stay fixed; every unlocked dependent value recalculates automatically.</p>
     </section>
 
+    <nav class="tab-nav" aria-label="Calculator pages">
+      <span class="tab-nav-label">Pages</span>
+      <button type="button" class="tab-btn active" data-tab-target="tab-calculator">Estimator</button>
+      <button type="button" class="tab-btn" data-tab-target="tab-scenarios">Usage Scenarios</button>
+      <button type="button" class="tab-btn" data-tab-target="tab-formulas">Formula Notes</button>
+    </nav>
+
+    <section id="tab-calculator" class="tab-page active">
     <section class="layout">
       <aside class="card">
         <div class="card-header"><h2>Inputs</h2><span class="pill">cm / parts / g</span></div>
@@ -50,7 +61,138 @@
         <div id="solverStatus" class="status">—</div>
         <div class="card" style="margin-top:14px"><div class="card-header"><h2>Balance samples</h2><span class="pill">same size + void</span></div><div class="card-body"><div style="overflow:auto"><table><thead><tr><th>Balance</th><th>Small share</th><th>Parts</th><th>Weight</th><th>Internal fill</th></tr></thead><tbody id="sampleRows"></tbody></table></div><p class="small-note">Detail balance controls the ratio of small dense parts to large hollow structural parts. Void controls the external empty space inside the model envelope.</p></div></div>
       </section>
+
     </section>
+
+    <section id="tab-scenarios" class="tab-page">
+      <article class="doc-card">
+        <header class="doc-card-header">
+          <h2>Usage Scenarios</h2>
+          <p>How to use the estimator when only part of the project information is known. The calculator behaves like a constraint system: locked values stay fixed and unlocked values adapt.</p>
+        </header>
+        <div class="doc-body">
+          <section class="doc-section">
+            <h3>1. Starting from model dimensions</h3>
+            <p>When length, width, and height are known from a Stud.io file or client requirements, the calculator uses them as the envelope size. It applies void to estimate occupied LEGO volume, then calculates part count and weight.</p>
+            <p>This is the most direct scenario: dimensions → volume → parts and weight.</p>
+          </section>
+          <section class="doc-section">
+            <h3>2. One dimension is fixed</h3>
+            <p>If one side is locked, for example length, the calculator keeps that value fixed. When the user changes desired weight or desired part count, width and height adapt together.</p>
+            <p>This is useful when the client has a strict maximum length but the other dimensions can still change.</p>
+          </section>
+          <section class="doc-section">
+            <h3>3. Two dimensions are fixed</h3>
+            <p>If two sides are locked, the third side becomes the main adjustable dimension. For example, if length and width are fixed, height changes to satisfy the target volume, part count, or weight.</p>
+            <p>This is useful for models that must fit a shelf, baseplate, package insert, or display footprint.</p>
+          </section>
+          <section class="doc-section">
+            <h3>4. All dimensions are fixed</h3>
+            <p>If all three dimensions are locked, the physical bounding box is fixed. The calculator then updates only the remaining unlocked values such as estimated parts, weight, void, or detail balance.</p>
+            <p>This is useful when the final model size is already decided and the estimator is used to understand production impact.</p>
+          </section>
+          <section class="doc-section">
+            <h3>5. Starting from desired part count</h3>
+            <p>When only desired part count is known, the calculator works backwards. It estimates how much occupied LEGO volume is needed for that number of parts, using current void and detail balance assumptions.</p>
+            <p>Then it converts the result into model dimensions. If no dimensions are locked, the result is cube-like. If dimensions are locked, the remaining dimensions adapt.</p>
+          </section>
+          <section class="doc-section">
+            <h3>6. Starting from desired weight</h3>
+            <p>When desired weight is the main target, the calculator estimates the occupied LEGO volume needed to reach that weight. It uses detail balance to estimate how dense the LEGO structure is.</p>
+            <p>This is useful for shipping constraints, packaging limits, material cost planning, or early feasibility checks.</p>
+          </section>
+          <section class="doc-section">
+            <h3>7. Changing void</h3>
+            <p>Void describes how much empty space exists inside the outer model envelope. Higher void means the same LEGO structure occupies a larger external bounding box.</p>
+            <p>If void is locked, it becomes a fixed design assumption. If void is unlocked, it can adapt when dimensions, part count, or weight are locked.</p>
+          </section>
+          <section class="doc-section">
+            <h3>8. Changing detail balance</h3>
+            <p>Detail balance replaces the earlier “wrinkle/detail” idea. It does not describe visual wrinkles directly. It describes the production consequence: the balance between small dense parts and large hollow structural parts.</p>
+            <p>Higher detail balance usually increases both part count and weight for the same occupied LEGO volume.</p>
+          </section>
+        </div>
+      </article>
+    </section>
+
+    <section id="tab-formulas" class="tab-page">
+      <article class="doc-card">
+        <header class="doc-card-header">
+          <h2>Formula Notes</h2>
+          <p>The formulas are simplified planning estimates. They are designed for fast feasibility checks, not for a final bill of materials.</p>
+        </header>
+        <div class="doc-body">
+          <div class="doc-two">
+            <section class="doc-section">
+              <h3>Envelope volume</h3>
+              <p>The envelope volume is the outer bounding-box volume of the LEGO model.</p>
+              <div class="formula">Envelope Volume = Length × Width × Height</div>
+              <p>All dimensions are measured in centimeters, so the result is cubic centimeters.</p>
+            </section>
+            <section class="doc-section">
+              <h3>Void and occupied LEGO volume</h3>
+              <p>Void is the empty share of the envelope volume. Occupied LEGO volume is the part of the bounding box that is actually filled by LEGO structure.</p>
+              <div class="formula">Occupied Volume = Envelope Volume × (1 - Void)</div>
+              <div class="formula">Envelope Volume = Occupied Volume / (1 - Void)</div>
+            </section>
+          </div>
+          <section class="doc-section">
+            <h3>Detail balance</h3>
+            <p>Detail balance controls how much occupied LEGO volume is treated as small dense detail parts versus large hollow structural parts.</p>
+            <div class="formula">Small Dense Volume Share = 0.05 + 0.30 × Detail Balance</div>
+            <div class="formula">Large Structural Volume Share = 1 - Small Dense Volume Share</div>
+            <p>A 50% balance does not mean half the pieces are small. It means the model sits halfway between a mostly structural build and a highly detailed build.</p>
+          </section>
+          <section class="doc-section">
+            <h3>Part count estimate</h3>
+            <p>The model uses two simplified groups: small dense parts and large structural parts.</p>
+            <div class="formula">Estimated Parts = Occupied Volume × (Small Share / Small Part Volume + Large Share / Large Part Volume)</div>
+            <p>Small parts generate more pieces per cubic centimeter. Large parts cover more volume with fewer pieces.</p>
+          </section>
+          <section class="doc-section">
+            <h3>Weight estimate</h3>
+            <p>Weight is based on occupied volume, ABS density, and effective internal fill.</p>
+            <div class="formula">Estimated Weight = Occupied Volume × Weighted Internal Fill × ABS Density</div>
+            <div class="formula">Weighted Internal Fill = Small Share × Small Fill + Large Share × Large Fill</div>
+            <p>The calculator uses 1.05 g/cm³ as a practical ABS density value. Small parts are treated as denser, while large parts are treated as more hollow.</p>
+          </section>
+          <section class="doc-section">
+            <h3>Large-part internal fill</h3>
+            <p>Large structural LEGO elements are not solid blocks. They include walls, studs, tubes, holes, and internal empty space.</p>
+            <div class="formula">Large Fill = 0.20 + 0.80 × (8 / Effective Size)^0.85</div>
+            <p>This prevents the calculator from treating every occupied cubic centimeter as solid plastic.</p>
+          </section>
+          <section class="doc-section">
+            <h3>Working backwards from part count</h3>
+            <p>When desired part count is the driver, the calculator searches for the occupied volume that produces that count under the current balance assumption.</p>
+            <div class="formula">Desired Parts → Required Occupied Volume → Envelope Volume → Dimensions</div>
+          </section>
+          <section class="doc-section">
+            <h3>Working backwards from weight</h3>
+            <p>When desired weight is the driver, the calculator estimates required occupied volume from density and fill, then converts it into envelope size.</p>
+            <div class="formula">Required Occupied Volume = Desired Weight / (Weighted Fill × ABS Density)</div>
+          </section>
+          <section class="doc-section">
+            <h3>Solving missing dimensions</h3>
+            <p>If the target envelope volume is known but some dimensions are unlocked, the calculator solves the missing dimensions automatically.</p>
+            <div class="formula">No fixed dimensions: L = W = H = ∛Envelope Volume</div>
+            <div class="formula">One fixed dimension: W = H = √(Envelope Volume / Fixed Length)</div>
+            <div class="formula">Two fixed dimensions: H = Envelope Volume / (Length × Width)</div>
+          </section>
+          <section class="doc-section">
+            <h3>Voxel-based proportion limits</h3>
+            <p>The occupied cube is treated as a 6 × 6 × 6 voxel structure. Voxel size is calculated before void is added, then remains fixed after void changes the envelope.</p>
+            <p>This creates a practical minimum cross-section and prevents unrealistic shapes such as extremely long and thin models.</p>
+          </section>
+          <section class="doc-section">
+            <h3>Lock system as formula constraints</h3>
+            <p>A locked value is treated as fixed. An unlocked value is allowed to adapt. When the user moves any slider, that value becomes the active driver and all unlocked dependent values are recalculated.</p>
+            <p>This lets the same formulas work in different directions: dimensions to parts, parts to dimensions, weight to volume, or fixed dimensions to balance and void.</p>
+          </section>
+        </div>
+      </article>
+    </section>
+
   </main>
 
   <script>
@@ -549,5 +691,17 @@
     for (const k of keys) createControl(k);
     solve();
   </script>
+
+  <script>
+    document.querySelectorAll('[data-tab-target]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const targetId = button.getAttribute('data-tab-target');
+        document.querySelectorAll('[data-tab-target]').forEach((b) => b.classList.toggle('active', b === button));
+        document.querySelectorAll('.tab-page').forEach((page) => page.classList.toggle('active', page.id === targetId));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+  </script>
+
 </body>
 </html>
