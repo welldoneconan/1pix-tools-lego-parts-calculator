@@ -38,7 +38,7 @@
 <main class="wrap">
 <section class="hero">
 <h1>LEGO Parts / Weight / Size Calculator</h1>
-<p class="subtitle">Move any slider to drive the model. Locked values stay fixed; every unlocked dependent value recalculates automatically.</p>
+<p class="subtitle">Fixed 8 mm voxel estimator. Locked values stay fixed; hidden bearing coverage q adapts large structural spans.</p>
 </section>
 <nav aria-label="Calculator pages" class="tab-nav">
 <span class="tab-nav-label">Pages</span>
@@ -74,12 +74,12 @@
 </div>
 <div class="grid2">
 <div class="group"><div class="group-title blue">Volume and void</div><div class="group-body"><div class="kv"><div class="k">Envelope volume</div><div class="v" id="envVol">—</div></div><div class="kv"><div class="k">Occupied LEGO volume</div><div class="v" id="occVol">—</div></div><div class="kv"><div class="k">Void</div><div class="v" id="voidOut">—</div></div><div class="kv"><div class="k">Cube equivalent side</div><div class="v" id="cubeSide">—</div></div></div></div>
-<div class="group"><div class="group-title purple">Voxel limits</div><div class="group-body"><div class="kv"><div class="k">Voxel side</div><div class="v" id="voxelSide">—</div></div><div class="kv"><div class="k">Min envelope side</div><div class="v" id="minSide">—</div></div><div class="kv"><div class="k">Max envelope side</div><div class="v" id="maxSide">—</div></div><div class="kv"><div class="k">Occupied voxel grid</div><div class="v">6 × 6 × 6</div></div></div></div>
+<div class="group"><div class="group-title purple">Voxel limits</div><div class="group-body"><div class="kv"><div class="k">Voxel side</div><div class="v" id="voxelSide">—</div></div><div class="kv"><div class="k">Min envelope side</div><div class="v" id="minSide">—</div></div><div class="kv"><div class="k">Max envelope side</div><div class="v" id="maxSide">—</div></div><div class="kv"><div class="k">Voxel grid</div><div class="v" id="voxelGrid">—</div></div></div></div>
 <div class="group"><div class="group-title green">Part count model</div><div class="group-body"><div class="kv"><div class="k">Small dense share</div><div class="v" id="smallShare">—</div></div><div class="kv"><div class="k">Large hollow share</div><div class="v" id="largeShare">—</div></div><div class="kv"><div class="k">Progressive large C_part</div><div class="v" id="cPart">—</div></div><div class="kv"><div class="k">Parts / 100 cm³</div><div class="v" id="partsPer100">—</div></div></div></div>
 <div class="group"><div class="group-title orange">Weight model</div><div class="group-body"><div class="kv"><div class="k">Bearing size</div><div class="v" id="bearingSize">—</div></div><div class="kv"><div class="k">Large part fill</div><div class="v" id="largeFill">—</div></div><div class="kv"><div class="k">Weighted internal fill</div><div class="v" id="weightedFill">—</div></div><div class="kv"><div class="k">ABS density</div><div class="v">1.05 g/cm³</div></div></div></div>
 </div>
 <div class="status" id="solverStatus">—</div>
-<div class="card" style="margin-top:14px"><div class="card-header"><h2>Balance samples</h2><span class="pill">same size + void</span></div><div class="card-body"><div style="overflow:auto"><table><thead><tr><th>Balance</th><th>Small share</th><th>Parts</th><th>Weight</th><th>Internal fill</th></tr></thead><tbody id="sampleRows"></tbody></table></div><p class="small-note">Detail balance controls the ratio of small dense parts to large hollow structural parts. Void controls the external empty space inside the model envelope.</p></div></div>
+<div class="card" style="margin-top:14px"><div class="card-header"><h2>Balance samples</h2><span class="pill">same size + void</span></div><div class="card-body"><div style="overflow:auto"><table><thead><tr><th>Balance</th><th>Small share</th><th>Parts</th><th>Weight</th><th>Internal fill</th></tr></thead><tbody id="sampleRows"></tbody></table></div><p class="small-note">Detail balance reserves occupied voxels for small non-bearing details. Large structure is estimated through hidden bearing coverage q.</p></div></div>
 </section>
 </section>
 </section>
@@ -91,18 +91,7 @@
 <p>How the linked LEGO estimator behaves when different values are moved or locked.</p>
 <span class="doc-version">Full documentation loaded</span>
 </header>
-<div class="doc-body">
-<section class="doc-section"><h3>How the LEGO estimator works</h3><p>This calculator is designed as a linked estimation model. The user can start from any available information: model dimensions, desired part count, desired weight, void percentage, or small/large detail balance. The calculator then automatically updates every unlocked value that depends on it.</p><p>The main idea is that all parameters describe the same LEGO model from different angles.</p><p><strong>Dimensions</strong> define the outer bounding box of the model: length, width, and height. Together they create the envelope volume.</p><p><strong>Void</strong> describes how much of that outer volume is empty space. For example, a model with 50% void means only half of the outer bounding volume is actually occupied by LEGO structure.</p><p><strong>Detail balance</strong> describes the balance between large hollow structural parts and small dense decorative parts. A low value means the model is built mostly from large parts, so it is lighter and uses fewer pieces. A high value means more small parts, so the model becomes heavier and the part count increases.</p><p><strong>Part count</strong> is estimated from the occupied volume and the detail balance. More small details increase the number of parts needed for the same model volume.</p><p><strong>Weight</strong> is estimated from occupied volume, plastic density, and internal fill. Large LEGO structures are treated as more hollow, while small details are treated as denser.</p></section>
-<section class="doc-section"><h3>Locking logic</h3><p>Every major parameter has a lock. A locked value is treated as fixed. It will not be recalculated by the system.</p><p>However, a locked value can still be changed manually by the user. When the user changes a locked value, that new value becomes the new fixed target, and the rest of the unlocked parameters adapt around it.</p><p>The general rule is:</p><ul><li>The value you move becomes the active driver.</li><li>Locked values stay fixed.</li><li>Unlocked values are recalculated automatically.</li><li>At least two parameters must remain unlocked, otherwise the model has no room to adapt.</li></ul><p>This makes the calculator behave like a constraint system rather than a one-way form.</p></section>
-<section class="doc-section"><h3>Scenario 1: only dimensions are changed</h3><p>If the user changes length, width, or height, the calculator treats the new dimensions as the main geometric input.</p><p>The envelope volume is calculated from:</p><div class="formula">Length × Width × Height</div><p>Then the void percentage is applied to estimate the occupied LEGO volume. From that occupied volume, the calculator estimates the part count and weight.</p><p>This scenario is useful when the client gives approximate dimensions, or when the model size is already known from a Stud.io file.</p></section>
-<section class="doc-section"><h3>Scenario 2: one dimension is fixed, the others adapt</h3><p>If the user locks one side, for example length, and then changes the target weight or target part count, the calculator keeps that length fixed.</p><p>The other two dimensions are recalculated equally so the model keeps a balanced rectangular shape.</p><p>Example:</p><ul><li>Length is locked.</li><li>Desired weight is changed.</li><li>Width and height update together.</li><li>Part count updates from the new volume and detail balance.</li></ul><p>This is useful when the client has a strict maximum length, but the other dimensions can still change.</p></section>
-<section class="doc-section"><h3>Scenario 3: two dimensions are fixed</h3><p>If two dimensions are locked, the third dimension becomes the main adjustable side.</p><p>Example:</p><ul><li>Length and width are locked.</li><li>Desired part count is changed.</li><li>Height changes to make the new volume possible.</li></ul><p>This is useful for models that must fit a footprint, such as a display base, shelf, box insert, or packaging constraint.</p></section>
-<section class="doc-section"><h3>Scenario 4: all three dimensions are fixed</h3><p>If length, width, and height are locked, the physical model size is fixed.</p><p>In that case the calculator cannot change the volume. Instead, it recalculates the unlocked outputs: part count, weight, and effective structure.</p><p>This scenario is useful when the model dimensions are already final and the calculator is only used to estimate production impact.</p></section>
-<section class="doc-section"><h3>Scenario 5: only desired part count is changed</h3><p>If the user changes only the desired part count, the calculator estimates the volume needed to reach that number of parts.</p><p>It uses the current void percentage and detail balance as assumptions.</p><p>Then it creates a proportional model size from that estimated volume, usually as a cube unless some dimensions are locked.</p><p>This is useful at the planning stage when the project has a part-count target but the exact dimensions are not known yet.</p></section>
-<section class="doc-section"><h3>Scenario 6: only desired weight is changed</h3><p>If the user changes only the desired weight, the calculator estimates how much occupied LEGO volume is needed to reach that weight.</p><p>It uses the current detail balance to decide how dense the model structure is.</p><p>Then it adds the selected void percentage and converts the result into outer dimensions.</p><p>This is useful when shipping weight, packaging weight, or material cost is the main constraint.</p></section>
-<section class="doc-section"><h3>Scenario 7: void is changed</h3><p>Void controls how much empty space exists inside the bounding volume.</p><p>If void increases, the same occupied LEGO volume needs a larger outer bounding box. If the outer dimensions are locked, increasing void reduces the estimated occupied structure and therefore reduces weight and part count.</p><p>If void is locked, it becomes a fixed design assumption. Other values must adapt around it.</p><p>This is useful because different model types have different void behavior. A compact cube-like object has lower void. A tall architectural model, open structure, or landscape scene can have much higher void.</p></section>
-<section class="doc-section"><h3>Scenario 8: detail balance is changed</h3><p>Detail balance changes the relationship between large structural pieces and small dense details.</p><p>If detail balance increases, the same volume tends to require more parts and more plastic mass. If weight or part count is locked, the calculator compensates by changing the available unlocked values, usually dimensions or occupied volume.</p><p>This makes the slider a practical replacement for the old “wrinkle/detail” idea. It does not try to describe visual wrinkles directly. Instead, it describes the actual production consequence: more small parts versus more large parts.</p></section>
-<section class="doc-section"><h3>Why this is useful</h3><p>The calculator is not meant to give a perfect final bill of materials. It is a fast planning tool.</p><p>It helps estimate whether a LEGO model is likely to be small or large, light or heavy, simple or detail-heavy, and whether a client target is realistic before detailed modeling begins.</p><p>It is especially useful when only partial information is available, for example:</p><ul><li>only one model dimension,</li><li>only a target piece count,</li><li>only a target weight,</li><li>client requirements without a complete 3D model,</li><li>or an early Stud.io file without final optimization.</li></ul></section>
+<div class="doc-body"> <section class="doc-section"> <h3>Core idea</h3> <p>This estimator treats a LEGO model as a simplified structure made from fixed 8 mm voxel slots. One voxel is approximately the volume of a small LEGO detail slot: 0.8 × 0.8 × 0.8 cm.</p> <p>The calculator is not trying to predict the exact final bill of materials. It estimates whether a model of a given size, part count, weight, void, and detail level is physically plausible as a LEGO build.</p> <p>The most important hidden value is <strong>q</strong>: average bearing coverage. It describes how many occupied voxels one large structural/bearing element can effectively cover. Larger q means fewer large parts are needed to span the model.</p> </section> <section class="doc-section"> <h3>How the locks work</h3> <p>Every visible value can be locked. Locked values become fixed anchors. Unlocked values are allowed to adapt when another value is changed.</p> <ul> <li>If a dimension is locked, the model must keep that physical size.</li> <li>If desired parts are locked, the estimator changes hidden q, void, balance, or other unlocked values to reach that part count.</li> <li>If desired weight is locked, the estimator adjusts the reachable structure so the plastic volume matches the target weight as closely as possible.</li> <li>At least two visible values must remain unlocked so the model has room to adapt.</li> </ul> <p>Moving a slider makes it the active driver. The calculator then solves the other unlocked values from the fixed 8 mm voxel model.</p> </section> <section class="doc-section"> <h3> the fixed 8 mm voxel model.</p> </section> <section class="doc-section"> <h3>Scenario 1: dimensions are known</h3> <p>When length, width, and height are locked, the envelope volume is fixed. The estimator calculates how many 8 mm voxel slots fit inside that bounding box.</p> <div class="formula">Envelope volume = Length × Width × Height</div> <div class="formula">Envelope voxels = Envelope volume / 0.512</div> <p>Void then decides how many of those voxels are actually occupied by LEGO structure.</p> <p>This is useful when a Stud.io model already exists, or when the client gives a required physical size.</p> </section> <section class="doc-section"> <h3>Scenario 2: aircraft, cranes, signs, and other open models</h3> <p>Large, thin, or spread-out models can have a high external void because the bounding box contains a lot of empty space. Aircraft are a typical example: wings and tail increase the envelope, but the actual LEGO structure occupies only part of that space.</p> <p>In this version, high void should not be solved by artificially increasing small-detail density. Instead, low part count is mainly handled by increasing hidden bearing coverage q.</p> <p>That means an aircraft can stay low-detail, use large structural spans, and still remain plausible without forcing the model toward 99% void.</p> </section> <section class="doc-section"> <h3>Scenario 3: compact models</h3> <p>Compact objects usually have lower void and smaller q. Their volume is more densely occupied, and the same part count can produce a smaller model.</p> <p>For a compact model, the estimator expects fewer empty voxel slots and a more direct relationship between physical volume, weight, and part count.</p> <p>If the calculator says the closest reachable estimate is outside the target, it usually means the locked part count or weight is too strict for the selected dimensions and void.</p> </section> <section class="doc-section"> <h3>Scenario 4: changing external void</h3> <p>External void describes empty space inside the model’s bounding box. It is a geometric value, not the hollow space inside individual LEGO bricks.</p> <p>The normal working range is now:</p> <div class="formula">Void range = 5% to 95%</div> <p>Low void means the envelope is mostly filled with LEGO structure. High void means the silhouette is spread out, open, thin, or sparse.</p> <p>When void increases, occupied voxels decrease. That usually lowers weight and may require larger q if the desired part count is locked.</p> </section> <section class="doc-section"> <h3>Scenario 5: changing small / large detail balance</h3> <p>Detail balance controls how many occupied voxels are reserved for non-bearing small details.</p> <p>Small details do not work as bearings. They add detail, part count, and weight, but they do not help span large distances.</p> <ul> <li>0% balance: almost all occupied voxels are large structural/bearing voxels.</li> <li>50% balance: moderate detail density.</li> <li>100% balance: many small details, but the model still keeps a large structural core.</li> </ul> <p>This prevents the calculator from solving low part count by incorrectly turning the whole model into small details.</p> </section> <section class="doc-section"> <h3>Scenario 6: desired parts are fixed</h3> <p>If desired parts are locked, the estimator calculates the hidden q value needed to make the model possible.</p> <p>If q stays within its allowed range, the model is reachable. If q would need to be too small or too large, the target is outside the current feasible range.</p> <p>For example, a large aircraft with only a few hundred parts needs a high q value, meaning the large parts are treated as long structural spans rather than many small separate pieces.</p> </section> <section class="doc-section"> <h3>Scenario 7: desired weight is fixed</h3> <p>If desired weight is locked, the estimator compares the target weight against the plastic volume implied by occupied voxels, small-detail fill, large-structure fill, and ABS density.</p> <p>Weight is not calculated directly from the number of parts. It is calculated from estimated plastic volume.</p> <p>This allows two models with similar part counts to have different weights if one uses denser small details and the other uses larger hollow structural spans.</p> </section> <section class="doc-section"> <h3>What the estimator is good for</h3> <p>The calculator is best used during early planning, before a final optimized Stud.io model exists.</p> <ul> <li>It can test whether a target part count is plausible for a given size.</li> <li>It can estimate approximate weight from dimensions and structure type.</li> <li>It can compare compact objects, vehicles, buildings, aircraft, signs, and open structures.</li> <li>It can show when a client request is outside a reasonable LEGO build range.</li> </ul> <p>The result should be read as a planning estimate, not as a final production BOM.</p> </section>
 </div>
 </article>
 </section>
@@ -115,19 +104,7 @@
 <p>Formula explanation and calculation logic used by the LEGO estimator.</p>
 <span class="doc-version">Full formula notes loaded</span>
 </header>
-<div class="doc-body">
-<section class="doc-section"><h3>Formula explanation</h3><p>The calculator is based on a few connected estimation formulas. The goal is not to produce a perfect final bill of materials, but to create a fast planning estimate from incomplete information.</p></section>
-<section class="doc-section"><h3>1. Envelope volume</h3><p>The envelope volume is the outer bounding-box volume of the model.</p><p>Formula:</p><div class="formula">Length × Width × Height = Envelope Volume</div><p>Where:</p><ul><li>Length, width, and height are measured in centimeters.</li><li>Envelope volume is measured in cubic centimeters.</li><li>This is the full outer volume, including empty space inside or around the LEGO structure.</li></ul><p>Example:</p><p>A model that is 30 × 20 × 10 cm has:</p><div class="formula">30 × 20 × 10 = 6,000 cm³ envelope volume.</div></section>
-<section class="doc-section"><h3>2. Void and occupied LEGO volume</h3><p>Void is the percentage of the envelope volume that is empty space.</p><p>Formula:</p><div class="formula">Occupied Volume = Envelope Volume × (1 - Void)</div><p>Or, if the occupied LEGO volume is known:</p><div class="formula">Envelope Volume = Occupied Volume / (1 - Void)</div><p>Where:</p><ul><li>Void = 50% means 0.50.</li><li>Occupied volume means the part of the volume that is actually filled by LEGO structure.</li><li>Envelope volume means the full external bounding box.</li></ul><p>Example:</p><p>If the envelope volume is 6,000 cm³ and void is 50%:</p><div class="formula">Occupied Volume = 6,000 × (1 - 0.50) = 3,000 cm³</div><p>This means only half of the outer box is actually occupied by LEGO structure.</p></section>
-<section class="doc-section"><h3>3. Detail balance</h3><p>Detail balance controls how much of the occupied LEGO volume is made from small dense parts versus large hollow structural parts.</p><p>A low detail balance means the model is mostly large structural LEGO elements. This usually produces a lighter model with fewer parts.</p><p>A high detail balance means the model uses more small decorative or dense parts. This usually increases both part count and weight.</p><p>The calculator converts detail balance into a small-part volume share.</p><p>Conceptually:</p><div class="formula">Small Dense Volume Share = Base Small Share + Detail Range × Detail Balance^1.6</div><div class="formula">Large Structural Volume Share = 1 - Small Dense Volume Share</div><p>This does not mean that 50% detail balance equals 50% small parts. The conversion is intentionally nonlinear: 50% detail balance produces a moderate small-part volume share, while 100% represents a very small-part-heavy build.</p></section>
-<section class="doc-section"><h3>4. Part count estimate</h3><p>Part count is estimated from occupied volume and detail balance.</p><p>The model is divided into two simplified groups:</p><ul><li>large structural parts;</li><li>small dense parts.</li></ul><p>Conceptual formula:</p><div class="formula">Estimated Parts = Occupied Volume × (Small Volume Share / Average Small Part Volume + Large Volume Share / Average Large Part Volume)</div><p>Small parts produce more pieces per cubic centimeter. Large parts produce fewer pieces per cubic centimeter.</p><p>This is why increasing detail balance increases the estimated part count even if the model dimensions stay the same.</p></section>
-<section class="doc-section"><h3>5. Weight estimate</h3><p>Weight is estimated from occupied LEGO volume, material density, and internal fill.</p><p>Formula:</p><div class="formula">Estimated Weight = Occupied Volume × Weighted Internal Fill × ABS Density</div><p>Where:</p><ul><li>Occupied Volume is the LEGO-occupied space in cm³.</li><li>Weighted Internal Fill estimates how much of that space is actual plastic.</li><li>ABS Density is the approximate density of LEGO plastic.</li><li>The calculator uses about 1.05 g/cm³ as a practical ABS density value.</li></ul><p>Large LEGO elements are treated as relatively hollow. Small LEGO elements are treated as denser.</p><p>So the weighted internal fill depends on detail balance:</p><div class="formula">Weighted Internal Fill = Small Volume Share × 65% Small Part Fill + Large Volume Share × Large Part Fill</div><p>This is why a model with more small parts becomes heavier even when the outer dimensions remain the same.</p></section>
-<section class="doc-section"><h3>6. Large-part internal fill</h3><p>Large structural LEGO parts are not solid blocks. They contain walls, studs, tubes, holes, and empty space.</p><p>The calculator estimates their internal fill based on an effective structural size, but keeps it in a hollow-structure range rather than treating large elements as dense blocks.</p><p>Conceptually:</p><div class="formula">Larger structural elements → about 18–22% internal fill<br/>Smaller structural elements → about 25–30% internal fill</div><p>This prevents the model from assuming that every cubic centimeter of occupied LEGO structure is solid plastic.</p></section>
-<section class="doc-section"><h3>7. Working backwards from desired part count</h3><p>If the user enters a desired part count, the calculator works backwards.</p><p>It estimates the occupied volume needed to produce that number of parts using the current detail balance.</p><p>Then it applies void to calculate the outer envelope volume.</p><p>Then it converts that volume into dimensions.</p><p>Simplified logic:</p><div class="formula">Desired Parts → Required Occupied Volume → Envelope Volume → Length / Width / Height</div><p>This is useful when the project starts from a piece-count target rather than from dimensions.</p></section>
-<section class="doc-section"><h3>8. Working backwards from desired weight</h3><p>If the user enters a desired weight, the calculator also works backwards.</p><p>Formula:</p><div class="formula">Required Occupied Volume = Desired Weight / (Weighted Internal Fill × ABS Density)</div><p>Then:</p><div class="formula">Envelope Volume = Required Occupied Volume / (1 - Void)</div><p>Then the envelope volume is converted into dimensions.</p><p>Simplified logic:</p><div class="formula">Desired Weight → Required Occupied Volume → Envelope Volume → Length / Width / Height</div><p>This is useful when the project is limited by shipping weight, material cost, or packaging weight.</p></section>
-<section class="doc-section"><h3>9. Dimension solving</h3><p>When the calculator knows the target envelope volume but not all dimensions, it solves the missing dimensions automatically.</p><p>If no dimensions are fixed:</p><div class="formula">Length = Width = Height = cube root of Envelope Volume</div><p>If one dimension is fixed:</p><p>The other two dimensions are calculated equally.</p><div class="formula">Width = Height = square root of (Envelope Volume / Fixed Length)</div><p>If two dimensions are fixed:</p><p>The third dimension is calculated directly.</p><div class="formula">Height = Envelope Volume / (Length × Width)</div><p>This lets the calculator preserve total volume while adapting the unlocked dimensions.</p></section>
-<section class="doc-section"><h3>10. Voxel-based proportion limits</h3><p>The calculator also prevents unrealistic proportions.</p><p>The reference occupied cube is treated as a 6 × 6 × 6 voxel structure.</p><p>The voxel size is calculated from the occupied cube before void is added. Then void can increase the outer envelope, but the voxel size itself does not change.</p><p>This creates a practical minimum cross-section. A model cannot become infinitely thin just because one dimension is stretched.</p><p>In simple terms:</p><ul><li>The occupied LEGO structure has a minimum meaningful thickness.</li><li>If one side becomes very long, the other two sides cannot shrink below the voxel-based limit.</li><li>This prevents unrealistic shapes like a 200 × 1 × 1 cm model.</li></ul></section>
-<section class="doc-section"><h3>11. Lock system as formula constraints</h3><p>The lock system turns the calculator into a constraint solver.</p><p>A locked value is treated as fixed in the formulas.</p><p>An unlocked value is allowed to change.</p><p>When the user moves any slider, that value becomes the active driver. The calculator then recalculates all unlocked dependent values while keeping locked values unchanged.</p><p>This means the same formulas can work in different directions:</p><ul><li>dimensions → parts and weight;</li><li>parts → volume and dimensions;</li><li>weight → volume and dimensions;</li><li>fixed dimensions + target weight → detail balance, void, or unlocked dimensions;</li><li>fixed length + target parts → width and height.</li></ul><p>The calculator is therefore not a one-way estimator. It is a flexible planning model for exploring LEGO model size, weight, part count, void, and detail density together.</p></section>
+<div class="doc-body"> <section class="doc-section"> <h3>1. Fixed voxel size</h3> <p>The estimator uses a fixed voxel size of 8 mm. This matches the basic LEGO module width and gives the model a stable physical unit.</p> <div class="formula">voxelSide = 0.8 cm</div> <div class="formula">voxelVolume = 0.8 × 0.8 × 0.8 = 0.512 cm³</div> <p>A small model does not force the voxel size to stay large. Instead, it simply contains fewer voxels. For example, a 2.4 × 2.4 × 2.4 cm model contains 3 × 3 × 3 = 27 envelope voxels.</p> </section> <section class="doc-section"> <h3>2. Envelope volume and envelope voxels</h3> <p>The envelope volume is the outer bounding box of the model.</p> <div class="formula">Venv = L × W × H</div> <p>The number of envelope voxels is calculated from the physical volume:</p> <div class="formula">Nenv = Venv / voxelVolume</div> <p>Since voxelVolume is fixed at 0.512 cm³, larger models naturally contain more voxel slots.</p> </section> <section class="doc-section"> <h3>3. External void</h3> <p>External void is the percentage of the envelope that is not occupied by LEGO structure.</p> <div class="formula">void range = 5% to 95%</div> <div class="formula">Nocc = Nenv × (1 - void)</div> <p>Here, Nocc is the number of occupied LEGO structure voxels. Void is geometric empty space in the bounding box, not the hollow space inside individual LEGO parts.</p> </section> <section class="doc-section"> <h3>4. Detail balance</h3> <p>Detail balance controls how many occupied voxels are assigned to small non-bearing details.</p> <p>The current model reserves up to 25% of occupied voxels for small details:</p> <div class="formula">smallVoxelFraction = 0.25 × balance</div> <div class="formula">Nsmall = Nocc × smallVoxelFraction</div> <div class="formula">Nlarge = Nocc - Nsmall</div> <p>Examples:</p> <ul> <li>balance = 0% → all occupied voxels are large structural voxels.</li> <li>balance = 50% → 12.5% of occupied voxels are small-detail voxels.</li> <li>balance = 100% → 25% of occupied voxels are small-detail voxels.</li> </ul> </section> <section class="doc-section"> <h3>5. Small details</h3> <p>Small details are treated as non-bearing elements. They add part count and weight, but they do not span or connect multiple structural voxel zones.</p> <div class="formula">Psmall = Nsmall</div> <p>This keeps small details from incorrectly solving large, low-part-count models. A model such as an aircraft should reduce part count mostly by increasing bearing coverage, not by changing small-detail behavior.</p> </section> <section class="doc-section"> <h3>6. Hidden bearing coverage q</h3> <p>The large structural part count is controlled by hidden average bearing coverage q.</p> <p>q means: how many occupied large voxels are effectively covered by one large structural/bearing element.</p> <div class="formula">Plarge = Nlarge / q</div> <p>The current bearing limit is based on the idea of a maximum 1 × 1 × 16 voxel structural span:</p> <div class="formula">qMin = 1</div> <div class="formula">qMax = min(16, longest side in voxels)</div> <p>Since one voxel is 8 mm, 16 voxels correspond to 128 mm. This keeps q connected to a plausible large LEGO structural span while still remaining an estimate.</p> </section> <section class="doc-section"> <h3>7. Total estimated parts</h3> <p>Total part count is the sum of non-bearing small details and large structural parts:</p> <div class="formula">P = Psmall + Plarge</div> <div class="formula">P = Nsmall + Nlarge / q</div> <p>If desired parts are locked, q can be solved directly:</p> <div class="formula">qRequired = Nlarge / (Ptarget - Nsmall)</div> <p>The target is feasible when:</p> <div class="formula">Ptarget &gt; Nsmall and qMin ≤ qRequired ≤ qMax</div> </section> <section class="doc-section"> <h3>8. Weight model</h3> <p>Weight is calculated from estimated plastic volume, not directly from part count.</p> <div class="formula">Weight = Vplastic × ABSdensity</div> <p>Plastic volume is estimated from small-detail fill and large-structure fill:</p> <div class="formula">Vplastic = voxelVolume × (Nsmall × smallFill + Nlarge × largeFill(q))</div> <div class="formula">Weight = voxelVolume × (Nsmall × smallFill + Nlarge × largeFill(q)) × ABSdensity</div> <p>Default assumptions:</p> <ul> <li>ABSdensity ≈ 1.05 g/cm³</li> <li>smallFill ≈ 0.65</li> <li>largeFill(q) decreases as q grows, because larger structural spans are treated as more efficient/hollow.</li> </ul> </section> <section class="doc-section"> <h3>9. Large-structure fill</h3> <p>Large LEGO structural elements are not solid blocks. They are treated as hollow or semi-hollow structural coverage.</p> <p>A simple fill curve can be:</p> <div class="formula">largeFill(q) = 0.18 + 0.12 × (1 / q)^0.6</div> <p>This gives approximately:</p> <ul> <li>q = 1 → denser large structure, about 30% fill.</li> <li>q = 16 → more efficient large span, about 20% fill.</li> </ul> </section> <section class="doc-section"> <h3>10. Dimension limits</h3> <p>The smallest useful model side is 2.4 cm, corresponding to 3 voxels.</p> <div class="formula">minimum side = 3 × 0.8 cm = 2.4 cm</div> <p>For proportion control, extremely thin structures can be limited by requiring meaningful cross-section. A practical structural rule is that long, stick-like forms should not become thinner than a stable voxel cross-section.</p> <p>The estimator still remains an approximation: it should say whether a model can plausibly exist, not whether every real LEGO connection is already solved.</p> </section> <section class="doc-section"> <h3>11. Why this model is faster</h3> <p>The previous solver searched through many combinations of void, balance, and bearing size. This version avoids that by solving q directly when the desired part count is known.</p> <div class="formula">qRequired = Nlarge / (Ptarget - Nsmall)</div> <p>This turns the hardest part of the calculation into a direct equation instead of a heavy search.</p> </section> <section class="doc-section"> <h3>12. Interpretation</h3> <p>The estimator should be read as a feasibility and planning tool.</p> <ul> <li>High void means open bounding-box geometry.</li> <li>High q means large structural spans and fewer large parts.</li> <li>High balance means more non-bearing small-detail voxels.</li> <li>Higher weight means more plastic volume, not necessarily more parts.</li> </ul> <p>A valid estimate means the model is plausible under the selected assumptions. It does not mean the final LEGO model is already optimized or mechanically verified.</p> </section>
 </div>
 </article>
 </section>
@@ -136,26 +113,20 @@
 <script>
 (function(){
   const ABS_DENSITY = 1.05;
-  // Recalibrated physical assumptions
-  // Detail balance is not a literal small-part volume share. It bends non-linearly:
-  // 0% ≈ coarse structural build, 50% ≈ moderate detailing, 100% ≈ very small-part-heavy.
-  const SMALL_SHARE_MIN = 0.02;
-  const SMALL_SHARE_MAX = 0.30;
-  const SMALL_SHARE_POWER = 1.6;
-  const V_MIN = 20;
-  const V_MAX = 200000;
-  const BASE_VOXEL_MM = 8;
-  const SMALL_PART_VOLUME = 0.65;
-  const SMALL_PART_FILL = 0.65;
-  const LARGE_PART_VOLUME_MIN = 3.0;
-  const LARGE_PART_VOLUME_BASE = 5.0;
-  const LARGE_PART_VOLUME_GROWTH = 3.5;
-  const LARGE_FILL_BASE = 0.18;
-  const LARGE_FILL_SCALE = 0.12;
+  const VOXEL_SIDE_CM = 0.8;
+  const VOXEL_VOLUME = VOXEL_SIDE_CM ** 3; // 0.512 cm³
+  const MIN_DIM_CM = 2.4;                  // 3 × 8 mm voxels
+  const GREEN_DIM_MAX_CM = 93.6;           // planning/green-zone marker, not a hard physical wall
+  const DIM_MAX_CM = 300;
+  const VOID_MIN = 5;
+  const VOID_MAX = 95;
+  const SMALL_DETAIL_MAX_FRACTION = 0.25;  // at balance 100%, up to 25% of occupied voxels are small-detail slots
+  const SMALL_FILL = 0.65;
+  const LARGE_FILL_MIN = 0.18;
+  const LARGE_FILL_SPAN = 0.12;
   const LARGE_FILL_POWER = 0.6;
-  const MAX_BEARING_SIZE_MM = 128;
-  const BEARING_STEP_MM = 0.5;
-  const BEARING_PART_POWER = 0.75;
+  const Q_MIN = 1;
+  const Q_HARD_MAX = 16;                   // 1 × 1 × 16 voxels = 128 mm span-equivalent cap
   const MIN_UNLOCKED = 2;
 
   const keys = ["length", "width", "height", "parts", "weight", "void", "balance"];
@@ -171,488 +142,361 @@
   };
   const hints = { length: "cm", width: "cm", height: "cm", parts: "pcs", weight: "g", void: "%", balance: "%" };
   const globalRanges = {
-    length: { min: 0.1, max: 300, step: 0.1 },
-    width: { min: 0.1, max: 300, step: 0.1 },
-    height: { min: 0.1, max: 300, step: 0.1 },
-    parts: { min: 1, max: 250000, step: 1 },
-    weight: { min: 1, max: 250000, step: 0.1 },
-    void: { min: 0, max: 90, step: 0.1 },
+    length: { min: MIN_DIM_CM, max: DIM_MAX_CM, step: 0.1 },
+    width: { min: MIN_DIM_CM, max: DIM_MAX_CM, step: 0.1 },
+    height: { min: MIN_DIM_CM, max: DIM_MAX_CM, step: 0.1 },
+    parts: { min: 1, max: 500000, step: 1 },
+    weight: { min: 1, max: 500000, step: 0.1 },
+    void: { min: VOID_MIN, max: VOID_MAX, step: 0.1 },
     balance: { min: 0, max: 100, step: 0.1 }
   };
 
   const state = {
-    values: { length: 12.6, width: 12.6, height: 12.6, parts: 460, weight: 640, void: 50, balance: 50 },
+    values: { length: 48, width: 48, height: 48, parts: 0, weight: 0, void: 50, balance: 50 },
     locks: { length: false, width: false, height: false, parts: false, weight: false, void: false, balance: false },
     currentRanges: {},
-    bearingSizeMm: null,
     lastChanged: null,
-    note: "Default model: 1000 cm³ occupied LEGO volume, 50% void, 50% detail balance."
+    q: null,
+    note: "Dynamic fixed-8-mm voxel model. Void changes occupied voxel count; bearing coverage q absorbs large-structure span."
   };
 
   const el = id => document.getElementById(id);
   const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
   const finite = (x, f = 0) => Number.isFinite(Number(x)) ? Number(x) : f;
+  const sq = x => x * x;
   const fmt = (x, d = 1) => Number.isFinite(x) ? x.toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d }) : "—";
   const fmtInt = x => Number.isFinite(x) ? Math.round(x).toLocaleString() : "—";
   const fmtWeight = g => !Number.isFinite(g) ? "—" : g >= 1000 ? `${fmt(g / 1000, 2)} kg` : `${fmt(g, 1)} g`;
   const fmtCm = x => Number.isFinite(x) ? `${fmt(x, 1)} cm` : "—";
   const pct = (x, d = 1) => Number.isFinite(x) ? `${fmt(x * 100, d)}%` : "—";
-  const unique = arr => Array.from(new Set(arr.map(v => Math.round(v * 1000) / 1000))).sort((a,b)=>a-b);
 
-  function productDims(vals = state.values) {
-    return Math.max(0.001, finite(vals.length, 1) * finite(vals.width, 1) * finite(vals.height, 1));
-  }
-
-  function smallShareFromBalance(balance) {
-    const t = clamp(balance, 0, 100) / 100;
-    return SMALL_SHARE_MIN + (SMALL_SHARE_MAX - SMALL_SHARE_MIN) * Math.pow(t, SMALL_SHARE_POWER);
-  }
-
-  function maxModelSideMm(dims) {
-    if (!dims) return MAX_BEARING_SIZE_MM;
-    return Math.max(finite(dims.length, 0), finite(dims.width, 0), finite(dims.height, 0)) * 10;
-  }
-
-  function bearingLimitsForDims(dims, envelopeVolume, occupiedVolume = null) {
-    // Bearing is a hidden structural scale, not a user-facing value.
-    // Its possible minimum follows the occupied LEGO structure, not only the outer envelope.
-    // Therefore, increasing external void reduces occupied volume and can reduce the natural bearing size
-    // until the voxel/base limit is reached. This lets void and detail balance compensate each other.
-    const structuralVolume = Number.isFinite(occupiedVolume) ? Math.max(occupiedVolume, 0.001) : Math.max(envelopeVolume, 0.001);
-    const occupiedCubeSideCm = Math.cbrt(structuralVolume);
-    const hardMax = Math.max(BASE_VOXEL_MM, Math.min(MAX_BEARING_SIZE_MM, maxModelSideMm(dims)));
-    const naturalMin = clamp(occupiedCubeSideCm * 10 / 3, BASE_VOXEL_MM, hardMax);
-    return { min: naturalMin, max: hardMax };
-  }
-
-  function progressiveCPart(volume, balance = 50, bearingSizeMm = null, naturalBearingMinMm = 24) {
-    // Effective occupied volume represented by one large structural part.
-    // Coarse/low-detail builds get larger average structural parts; high-detail builds get smaller ones.
-    // A hidden bearing size may increase the structural scale, but only when constraints require it.
-    const minVolume = 120;
-    const refMax = 5000;
-    const safeVolume = Math.max(volume, minVolume);
-    const logFactor = clamp(Math.log(safeVolume / minVolume) / Math.log(refMax / minVolume), 0, 1);
-    const baseLargePartVolume = LARGE_PART_VOLUME_BASE + LARGE_PART_VOLUME_GROWTH * logFactor;
-    const detailFactor = 1.25 - 0.5 * (clamp(balance, 0, 100) / 100);
-    const safeBearing = Math.max(BASE_VOXEL_MM, finite(bearingSizeMm, naturalBearingMinMm));
-    const safeNatural = Math.max(BASE_VOXEL_MM, finite(naturalBearingMinMm, BASE_VOXEL_MM));
-    const bearingFactor = Math.pow(Math.max(1, safeBearing / safeNatural), BEARING_PART_POWER);
-    return Math.max(LARGE_PART_VOLUME_MIN, baseLargePartVolume * detailFactor * bearingFactor);
-  }
-
-  function internalFill(sizeMm) {
-    // Effective plastic fill of large hollow structural elements.
-    // It intentionally stays much lower than solid plastic to match hollow LEGO bricks/plates.
-    const raw = LARGE_FILL_BASE + LARGE_FILL_SCALE * Math.pow(BASE_VOXEL_MM / Math.max(sizeMm, 0.001), LARGE_FILL_POWER);
-    return clamp(raw, LARGE_FILL_BASE, LARGE_FILL_BASE + LARGE_FILL_SCALE);
-  }
-
-  function calcFromGeometry(occupiedVolumeInput, balance, voidPct, dims, bearingSizeMm = null) {
-    const voidRatio = clamp(voidPct / 100, 0, 0.9);
-    const occupiedVolume = clamp(occupiedVolumeInput, V_MIN, V_MAX);
-    const envelopeVolume = productDims(dims);
-    const cubeSide = Math.cbrt(envelopeVolume);
-    const bearingLimits = bearingLimitsForDims(dims, envelopeVolume, occupiedVolume);
-    const bearing = bearingSizeMm == null
-      ? bearingLimits.min
-      : clamp(bearingSizeMm, bearingLimits.min, bearingLimits.max);
-    const smallShare = smallShareFromBalance(balance);
-    const largeShare = 1 - smallShare;
-    const cPart = progressiveCPart(occupiedVolume, balance, bearing, bearingLimits.min);
-    const parts = occupiedVolume * (smallShare / SMALL_PART_VOLUME + largeShare / cPart);
-    const partsPer100 = parts / occupiedVolume * 100;
-    const largeFill = internalFill(bearing);
-    const weightedFill = smallShare * SMALL_PART_FILL + largeShare * largeFill;
-    const weight = occupiedVolume * weightedFill * ABS_DENSITY;
+  function dimsFromState() {
     return {
-      volume: occupiedVolume,
-      voidRatio,
-      envelopeVolume,
-      cubeSide,
-      smallShare,
-      largeShare,
-      cPart,
-      parts,
-      partsPer100,
-      bearingSizeMm: bearing,
-      bearingMinMm: bearingLimits.min,
-      bearingMaxMm: bearingLimits.max,
-      largeFill,
-      weightedFill,
-      weight
+      length: Math.max(MIN_DIM_CM, finite(state.values.length, MIN_DIM_CM)),
+      width: Math.max(MIN_DIM_CM, finite(state.values.width, MIN_DIM_CM)),
+      height: Math.max(MIN_DIM_CM, finite(state.values.height, MIN_DIM_CM))
     };
   }
 
-  function calcFromVolume(volume, balance, voidPct, bearingSizeMm = null, dims = null) {
-    const voidRatio = clamp(voidPct / 100, 0, 0.9);
-    const occupiedVolume = clamp(volume, V_MIN, V_MAX);
-    const envelopeVolume = occupiedVolume / Math.max(1 - voidRatio, 0.01);
-    const cubeSide = Math.cbrt(envelopeVolume);
-    const modelDims = dims || { length: cubeSide, width: cubeSide, height: cubeSide };
-    return calcFromGeometry(occupiedVolume, balance, voidPct, modelDims, bearingSizeMm);
+  function productDims(dims = dimsFromState()) {
+    return Math.max(0.001, dims.length * dims.width * dims.height);
   }
 
-  function modelFromValues(vals = state.values) {
-    const dims = { length: finite(vals.length, 1), width: finite(vals.width, 1), height: finite(vals.height, 1) };
+  function sideVoxels(dims) {
+    return {
+      x: dims.length / VOXEL_SIDE_CM,
+      y: dims.width / VOXEL_SIDE_CM,
+      z: dims.height / VOXEL_SIDE_CM
+    };
+  }
+
+  function qMaxForDims(dims) {
+    const v = sideVoxels(dims);
+    const longest = Math.max(v.x, v.y, v.z);
+    return clamp(Math.min(Q_HARD_MAX, longest), Q_MIN, Q_HARD_MAX);
+  }
+
+  function largeFill(q) {
+    const safeQ = Math.max(Q_MIN, finite(q, Q_MIN));
+    return clamp(LARGE_FILL_MIN + LARGE_FILL_SPAN * Math.pow(Q_MIN / safeQ, LARGE_FILL_POWER), LARGE_FILL_MIN, LARGE_FILL_MIN + LARGE_FILL_SPAN);
+  }
+
+  function qDefaultFor(balancePct, dims) {
+    const b = clamp(balancePct, 0, 100) / 100;
+    const qMax = qMaxForDims(dims);
+    // Coarse models naturally use longer structural spans; detail-heavy models use shorter average spans.
+    const spanPreference = 1.0 - 0.55 * b;
+    return clamp(Q_MIN + (qMax - Q_MIN) * spanPreference, Q_MIN, qMax);
+  }
+
+  function targetsFromState(active = null) {
+    const targets = {};
+    if (state.locks.parts || active === 'parts') targets.parts = Math.max(1, finite(state.values.parts, 1));
+    if (state.locks.weight || active === 'weight') targets.weight = Math.max(1, finite(state.values.weight, 1));
+    return targets;
+  }
+
+  function partTol(target) { return Math.max(0.25, Math.abs(target) * 0.006); }
+  function weightTol(target) { return Math.max(0.15, Math.abs(target) * 0.006); }
+
+  function baseVoxelModel(dims, voidPct, balancePct) {
+    const d = clamp(voidPct, VOID_MIN, VOID_MAX) / 100;
+    const b = clamp(balancePct, 0, 100) / 100;
     const envelopeVolume = productDims(dims);
-    const voidPct = clamp(finite(vals.void, 50), 0, 90);
-    const occupiedVolume = envelopeVolume * Math.max(1 - voidPct / 100, 0.01);
-    const bearing = Number.isFinite(state.bearingSizeMm) ? state.bearingSizeMm : null;
-    return calcFromGeometry(occupiedVolume, clamp(finite(vals.balance, 50), 0, 100), voidPct, dims, bearing);
+    const envelopeVoxels = envelopeVolume / VOXEL_VOLUME;
+    const occupiedVoxels = envelopeVoxels * (1 - d);
+    const smallVoxelFraction = SMALL_DETAIL_MAX_FRACTION * b;
+    const smallVoxels = occupiedVoxels * smallVoxelFraction;
+    const largeVoxels = Math.max(0, occupiedVoxels - smallVoxels);
+    const qMax = qMaxForDims(dims);
+    return { envelopeVolume, envelopeVoxels, occupiedVoxels, smallVoxelFraction, smallVoxels, largeVoxels, qMax };
   }
 
-  function dimensionLimitsFromOccupied(occupiedVolume, voidPct) {
-    const voidRatio = clamp(voidPct / 100, 0, 0.9);
-    const envelopeVolume = occupiedVolume / Math.max(1 - voidRatio, 0.01);
-    const occupiedCubeSide = Math.cbrt(Math.max(occupiedVolume, 0.001));
-    const voxelSide = occupiedCubeSide / 6;
-    const minEnvelopeSide = Math.max(0.1, voxelSide);
-    const maxEnvelopeSide = envelopeVolume / (minEnvelopeSide * minEnvelopeSide);
-    return { voxelSide, minEnvelopeSide, maxEnvelopeSide, envelopeVolume, occupiedVolume };
-  }
+  function evaluateModel(dims, voidPct, balancePct, targets = {}, qOverride = null) {
+    const base = baseVoxelModel(dims, voidPct, balancePct);
+    let q = qOverride == null ? qDefaultFor(balancePct, dims) : finite(qOverride, Q_MIN);
+    let feasible = true;
+    const warnings = [];
 
-  function partsTolerance(target) { return Math.max(0.15, Math.abs(target) * 0.006); }
-  function weightTolerance(target) { return Math.max(0.08, Math.abs(target) * 0.006); }
-
-  function solveVolumeForParts(targetParts, balance, bearingSizeMm = null) {
-    const target = Math.max(1, targetParts);
-    let lo = V_MIN, hi = V_MAX;
-    for (let i = 0; i < 70; i++) {
-      const mid = (lo + hi) / 2;
-      const p = calcFromVolume(mid, balance, state.values.void, bearingSizeMm).parts;
-      if (p < target) lo = mid; else hi = mid;
-    }
-    return (lo + hi) / 2;
-  }
-
-  function solveVolumeForWeight(targetWeight, balance, voidPct, bearingSizeMm = null) {
-    const target = Math.max(1, targetWeight);
-    let lo = V_MIN, hi = V_MAX;
-    for (let i = 0; i < 70; i++) {
-      const mid = (lo + hi) / 2;
-      const w = calcFromVolume(mid, balance, voidPct, bearingSizeMm).weight;
-      if (w < target) lo = mid; else hi = mid;
-    }
-    return (lo + hi) / 2;
-  }
-
-  function solveVoidForFixedEnvelopeByParts(envelopeVolume, balance, targetParts) {
-    const target = Math.max(1, targetParts);
-    const pAtVoid0 = calcFromVolume(envelopeVolume, balance, 0).parts;
-    const pAtVoid90 = calcFromVolume(envelopeVolume * 0.1, balance, 90).parts;
-    if (target > pAtVoid0 + partsTolerance(target) || target < pAtVoid90 - partsTolerance(target)) return null;
-    let lo = 0, hi = 90;
-    for (let i = 0; i < 60; i++) {
-      const mid = (lo + hi) / 2;
-      const occupied = envelopeVolume * (1 - mid / 100);
-      const p = calcFromVolume(occupied, balance, mid).parts;
-      if (p > target) lo = mid; else hi = mid;
-    }
-    return (lo + hi) / 2;
-  }
-
-  function solveVoidForFixedEnvelopeByWeight(envelopeVolume, balance, targetWeight) {
-    const target = Math.max(1, targetWeight);
-    const wAtVoid0 = calcFromVolume(envelopeVolume, balance, 0).weight;
-    const wAtVoid90 = calcFromVolume(envelopeVolume * 0.1, balance, 90).weight;
-    if (target > wAtVoid0 + weightTolerance(target) || target < wAtVoid90 - weightTolerance(target)) return null;
-    let lo = 0, hi = 90;
-    for (let i = 0; i < 60; i++) {
-      const mid = (lo + hi) / 2;
-      const occupied = envelopeVolume * (1 - mid / 100);
-      const w = calcFromVolume(occupied, balance, mid).weight;
-      if (w > target) lo = mid; else hi = mid;
-    }
-    return (lo + hi) / 2;
-  }
-
-  function makeRange(min, max, step) {
-    const out = [];
-    for (let x = min; x <= max + 1e-9; x += step) out.push(Math.round(x * 1000) / 1000);
-    return out;
-  }
-
-  function logSpace(min, max, count) {
-    const out = [];
-    const a = Math.log(min), b = Math.log(max);
-    for (let i = 0; i < count; i++) out.push(Math.exp(a + (b - a) * (i / Math.max(1, count - 1))));
-    return out;
-  }
-
-  function domainFor(key, anchors, precise = true) {
-    if (Object.prototype.hasOwnProperty.call(anchors, key)) return [finite(anchors[key], state.values[key])];
-    // Coarse/fine domains are separate from UI slider step.
-    // Fine solve gives smooth coupling between void and detail balance; coarse range pass keeps UI responsive.
-    if (key === 'void') return unique([...makeRange(0, 90, precise ? 0.5 : 2.5), state.values.void]);
-    if (key === 'balance') return unique([...makeRange(0, 100, precise ? 0.5 : 2.5), state.values.balance]);
-    return [];
-  }
-
-  function volumeDomain(anchors) {
-    const list = [...logSpace(V_MIN, V_MAX, 72), modelFromValues().volume];
-    const fixedDims = dimKeys.filter(k => Object.prototype.hasOwnProperty.call(anchors, k));
-    if (fixedDims.length === 3) {
-      const e = anchors.length * anchors.width * anchors.height;
-      list.push(e, e * 0.1, e * 0.5, e * 0.9);
-    }
-    return unique(list.filter(v => v >= V_MIN && v <= V_MAX));
-  }
-
-  function anchorsFromLocks(excludeKey = null, includeActive = null) {
-    const anchors = {};
-    for (const k of keys) {
-      if (state.locks[k] && k !== excludeKey) anchors[k] = finite(state.values[k], 0);
-    }
-    if (includeActive && includeActive !== excludeKey) anchors[includeActive] = finite(state.values[includeActive], 0);
-    return anchors;
-  }
-
-  function dimsFromEnvelope(envelopeVolume, occupiedVolume, voidPct, anchors) {
-    const fixedDims = dimKeys.filter(k => Object.prototype.hasOwnProperty.call(anchors, k));
-    const dims = {};
-    const eps = 1e-6;
-    if (fixedDims.length === 3) {
-      dims.length = anchors.length; dims.width = anchors.width; dims.height = anchors.height;
-      const fixedEnvelope = productDims(dims);
-      if (Math.abs(fixedEnvelope - envelopeVolume) > Math.max(0.05, fixedEnvelope * 0.006)) return null;
-    } else if (fixedDims.length === 2) {
-      const [a, b] = fixedDims;
-      const free = dimKeys.find(k => !fixedDims.includes(k));
-      dims[a] = finite(anchors[a], 1);
-      dims[b] = finite(anchors[b], 1);
-      dims[free] = envelopeVolume / Math.max(dims[a] * dims[b], eps);
-    } else if (fixedDims.length === 1) {
-      const a = fixedDims[0];
-      const [f1, f2] = dimKeys.filter(k => k !== a);
-      dims[a] = finite(anchors[a], 1);
-      const side = Math.sqrt(envelopeVolume / Math.max(dims[a], eps));
-      dims[f1] = side;
-      dims[f2] = side;
-    } else {
-      const side = Math.cbrt(envelopeVolume);
-      dims.length = side; dims.width = side; dims.height = side;
-    }
-    if (!dimKeys.every(k => Number.isFinite(dims[k]) && dims[k] > 0)) return null;
-    const limits = dimensionLimitsFromOccupied(occupiedVolume, voidPct);
-    for (const k of dimKeys) {
-      if (dims[k] < limits.minEnvelopeSide - 0.03) return null;
-      if (dims[k] > limits.maxEnvelopeSide + 0.03) return null;
-    }
-    return dims;
-  }
-
-  function targetMatches(stateObj, anchors) {
-    if (Object.prototype.hasOwnProperty.call(anchors, 'parts') && Math.abs(stateObj.parts - anchors.parts) > partsTolerance(anchors.parts)) return false;
-    if (Object.prototype.hasOwnProperty.call(anchors, 'weight') && Math.abs(stateObj.weight - anchors.weight) > weightTolerance(anchors.weight)) return false;
-    return true;
-  }
-
-  function chooseMinimalFeasibleBearing(occupiedVolume, voidPct, balance, dims, anchors) {
-    const envelopeVolume = productDims(dims);
-    const limits = bearingLimitsForDims(dims, envelopeVolume);
-    const hasPartsTarget = Object.prototype.hasOwnProperty.call(anchors, 'parts');
-    const hasWeightTarget = Object.prototype.hasOwnProperty.call(anchors, 'weight');
-    if (!hasPartsTarget && !hasWeightTarget) return { bearing: limits.min, model: calcFromGeometry(occupiedVolume, balance, voidPct, dims, limits.min) };
-    for (let br = limits.min; br <= limits.max + 1e-9; br += BEARING_STEP_MM) {
-      const model = calcFromGeometry(occupiedVolume, balance, voidPct, dims, br);
-      const candidate = { length: dims.length, width: dims.width, height: dims.height, void: voidPct, balance, parts: model.parts, weight: model.weight, bearingSizeMm: br, model };
-      if (targetMatches(candidate, anchors)) return { bearing: br, model };
-    }
-    return null;
-  }
-
-  function pushState(states, occupiedVolume, voidPct, balance, anchors) {
-    if (!Number.isFinite(occupiedVolume) || occupiedVolume < V_MIN || occupiedVolume > V_MAX) return;
-    if (!Number.isFinite(voidPct) || voidPct < -1e-6 || voidPct > 90 + 1e-6) return;
-    if (!Number.isFinite(balance) || balance < -1e-6 || balance > 100 + 1e-6) return;
-    const v = clamp(voidPct, 0, 90);
-    const b = clamp(balance, 0, 100);
-    const envelopeVolume = occupiedVolume / Math.max(1 - v / 100, 0.01);
-    const dims = dimsFromEnvelope(envelopeVolume, occupiedVolume, v, anchors);
-    if (!dims) return;
-    const bearingChoice = chooseMinimalFeasibleBearing(occupiedVolume, v, b, dims, anchors);
-    if (!bearingChoice) return;
-    const model = bearingChoice.model;
-    const s = { length: dims.length, width: dims.width, height: dims.height, void: v, balance: b, parts: model.parts, weight: model.weight, bearingSizeMm: model.bearingSizeMm, model };
-    if (!targetMatches(s, anchors)) return;
-    states.push(s);
-  }
-
-  function buildValidStates(anchors, precise = true) {
-    const states = [];
-    const allDimsFixed = dimKeys.every(k => Object.prototype.hasOwnProperty.call(anchors, k));
-    const hasParts = Object.prototype.hasOwnProperty.call(anchors, 'parts');
-    const hasWeight = Object.prototype.hasOwnProperty.call(anchors, 'weight');
-    const balances = domainFor('balance', anchors, precise);
-    const voids = domainFor('void', anchors, precise);
-    const fixedEnvelope = allDimsFixed ? anchors.length * anchors.width * anchors.height : null;
-
-    if (allDimsFixed) {
-      // With fixed dimensions, void and balance are visible degrees of freedom,
-      // and bearing size is a hidden degree of freedom that always uses the minimal feasible value.
-      for (const v of voids) {
-        const occupied = fixedEnvelope * (1 - v / 100);
-        for (const b of balances) pushState(states, occupied, v, b, anchors);
+    if (Object.prototype.hasOwnProperty.call(targets, 'parts')) {
+      const denom = targets.parts - base.smallVoxels;
+      if (denom <= 0 || base.largeVoxels <= 0) {
+        feasible = false;
+        warnings.push('Parts target is below small-detail slots, so q cannot satisfy it.');
+        q = base.qMax;
+      } else {
+        const qRequired = base.largeVoxels / denom;
+        if (qRequired < Q_MIN || qRequired > base.qMax) {
+          feasible = false;
+          warnings.push(`Required q ${fmt(qRequired, 2)} is outside ${fmt(Q_MIN, 1)}–${fmt(base.qMax, 1)}.`);
+        }
+        q = clamp(qRequired, Q_MIN, base.qMax);
       }
-      return states;
-    }
-
-    if (hasParts) {
-      for (const b of balances) {
-        const occupied = solveVolumeForParts(anchors.parts, b);
-        for (const v of voids) pushState(states, occupied, v, b, anchors);
-      }
-    } else if (hasWeight) {
-      for (const b of balances) {
-        for (const v of voids) {
-          const occupied = solveVolumeForWeight(anchors.weight, b, v);
-          pushState(states, occupied, v, b, anchors);
+    } else if (Object.prototype.hasOwnProperty.call(targets, 'weight')) {
+      if (base.largeVoxels <= 0) {
+        const smallOnlyWeight = VOXEL_VOLUME * base.smallVoxels * SMALL_FILL * ABS_DENSITY;
+        feasible = Math.abs(smallOnlyWeight - targets.weight) <= weightTol(targets.weight);
+        q = Q_MIN;
+      } else {
+        const fillNeeded = (targets.weight / (VOXEL_VOLUME * ABS_DENSITY) - base.smallVoxels * SMALL_FILL) / base.largeVoxels;
+        const minFill = largeFill(base.qMax);
+        const maxFill = largeFill(Q_MIN);
+        if (fillNeeded < minFill || fillNeeded > maxFill) {
+          feasible = false;
+          warnings.push(`Weight target needs large fill ${pct(fillNeeded, 1)}, outside ${pct(minFill, 1)}–${pct(maxFill, 1)}.`);
+          q = fillNeeded < minFill ? base.qMax : Q_MIN;
+        } else {
+          q = Math.pow(LARGE_FILL_SPAN / Math.max(0.000001, fillNeeded - LARGE_FILL_MIN), 1 / LARGE_FILL_POWER);
+          q = clamp(q, Q_MIN, base.qMax);
         }
       }
-    } else {
-      const volumes = volumeDomain(anchors);
-      for (const occupied of volumes) for (const v of voids) for (const b of balances) pushState(states, occupied, v, b, anchors);
     }
-    return states;
+
+    const lf = largeFill(q);
+    const parts = base.smallVoxels + (base.largeVoxels / q);
+    const plasticVolume = VOXEL_VOLUME * (base.smallVoxels * SMALL_FILL + base.largeVoxels * lf);
+    const weight = plasticVolume * ABS_DENSITY;
+    const fill = base.occupiedVoxels > 0 ? (base.smallVoxels * SMALL_FILL + base.largeVoxels * lf) / base.occupiedVoxels : 0;
+
+    if (Object.prototype.hasOwnProperty.call(targets, 'parts') && Math.abs(parts - targets.parts) > partTol(targets.parts)) feasible = false;
+    if (Object.prototype.hasOwnProperty.call(targets, 'weight') && Math.abs(weight - targets.weight) > weightTol(targets.weight)) feasible = false;
+
+    const occupiedVolume = base.occupiedVoxels * VOXEL_VOLUME;
+    const cubeSide = Math.cbrt(Math.max(occupiedVolume, 0.001));
+    const maxSideVoxels = Math.max(dims.length, dims.width, dims.height) / VOXEL_SIDE_CM;
+
+    return {
+      ...base,
+      dims,
+      voidPct: clamp(voidPct, VOID_MIN, VOID_MAX),
+      balancePct: clamp(balancePct, 0, 100),
+      q,
+      qMin: Q_MIN,
+      qMax: base.qMax,
+      qSpanMm: q * VOXEL_SIDE_CM * 10,
+      qMaxMm: base.qMax * VOXEL_SIDE_CM * 10,
+      parts,
+      weight,
+      largeFill: lf,
+      weightedFill: fill,
+      plasticVolume,
+      volume: occupiedVolume,
+      envelopeVolume: base.envelopeVolume,
+      voxelSide: VOXEL_SIDE_CM,
+      voxelVolume: VOXEL_VOLUME,
+      cubeSide,
+      smallShare: base.occupiedVoxels > 0 ? base.smallVoxels / base.occupiedVoxels : 0,
+      largeShare: base.occupiedVoxels > 0 ? base.largeVoxels / base.occupiedVoxels : 0,
+      partsPer100: occupiedVolume > 0 ? parts / occupiedVolume * 100 : 0,
+      maxSideVoxels,
+      feasible,
+      warnings
+    };
   }
 
-  function rangeFromStates(states, key) {
-    if (!states.length) return { ...globalRanges[key] };
-    const vals = states.map(s => s[key]).filter(Number.isFinite);
-    if (!vals.length) return { ...globalRanges[key] };
-    return { min: Math.min(...vals), max: Math.max(...vals), step: globalRanges[key].step };
+  function modelScore(model, targets, prefVoid, prefBalance) {
+    let score = model.feasible ? 0 : 1e5;
+    if (Object.prototype.hasOwnProperty.call(targets, 'parts')) score += sq((model.parts - targets.parts) / Math.max(1, partTol(targets.parts)));
+    if (Object.prototype.hasOwnProperty.call(targets, 'weight')) score += sq((model.weight - targets.weight) / Math.max(1, weightTol(targets.weight)));
+    score += 0.0008 * sq((model.voidPct - prefVoid) / 10);
+    score += 0.0008 * sq((model.balancePct - prefBalance) / 10);
+    return score;
   }
 
-  function median(vals) {
-    const a = vals.filter(Number.isFinite).sort((x,y)=>x-y);
-    if (!a.length) return NaN;
-    const mid = Math.floor(a.length / 2);
-    return a.length % 2 ? a[mid] : (a[mid-1] + a[mid]) / 2;
+  function searchBalance(dims, voidPct, targets, preferredBalance) {
+    let best = null, bestScore = Infinity;
+    const test = b => {
+      const m = evaluateModel(dims, voidPct, b, targets);
+      const s = modelScore(m, targets, voidPct, preferredBalance);
+      if (s < bestScore) { best = m; bestScore = s; }
+    };
+    for (let b = 0; b <= 100; b += 1) test(b);
+    const center = best ? best.balancePct : preferredBalance;
+    for (let b = Math.max(0, center - 2); b <= Math.min(100, center + 2) + 1e-9; b += 0.1) test(b);
+    return best;
   }
 
-  function chooseRepresentativeState(states, active, activeIsAnchor) {
-    if (!states.length) return null;
-    const med = {};
-    for (const k of keys) med[k] = median(states.map(s => s[k]));
-    const ranges = {};
-    for (const k of keys) ranges[k] = rangeFromStates(states, k);
-    let best = states[0], bestScore = Infinity;
-    for (const s of states) {
-      let score = 0;
-      for (const k of keys) {
-        if (state.locks[k]) continue;
-        const span = Math.max(0.001, ranges[k].max - ranges[k].min);
-        if (k === active) {
-          if (!activeIsAnchor) score += 9 * Math.pow((s[k] - state.values[k]) / span, 2);
-          continue;
-        }
-        score += Math.pow((s[k] - med[k]) / span, 2);
-      }
-      if (score < bestScore) { best = s; bestScore = score; }
+  function searchVoid(dims, balancePct, targets, preferredVoid) {
+    let best = null, bestScore = Infinity;
+    const test = v => {
+      const m = evaluateModel(dims, v, balancePct, targets);
+      const s = modelScore(m, targets, preferredVoid, balancePct);
+      if (s < bestScore) { best = m; bestScore = s; }
+    };
+    for (let v = VOID_MIN; v <= VOID_MAX; v += 1) test(v);
+    const center = best ? best.voidPct : preferredVoid;
+    for (let v = Math.max(VOID_MIN, center - 2); v <= Math.min(VOID_MAX, center + 2) + 1e-9; v += 0.1) test(v);
+    return best;
+  }
+
+  function searchVoidBalance(dims, targets, preferredVoid, preferredBalance) {
+    let best = null, bestScore = Infinity;
+    const test = (v, b) => {
+      const m = evaluateModel(dims, v, b, targets);
+      const s = modelScore(m, targets, preferredVoid, preferredBalance);
+      if (s < bestScore) { best = m; bestScore = s; }
+    };
+    for (let v = VOID_MIN; v <= VOID_MAX; v += 2) {
+      for (let b = 0; b <= 100; b += 2) test(v, b);
+    }
+    const cv = best ? best.voidPct : preferredVoid;
+    const cb = best ? best.balancePct : preferredBalance;
+    for (let v = Math.max(VOID_MIN, cv - 3); v <= Math.min(VOID_MAX, cv + 3) + 1e-9; v += 0.5) {
+      for (let b = Math.max(0, cb - 3); b <= Math.min(100, cb + 3) + 1e-9; b += 0.5) test(v, b);
     }
     return best;
   }
 
-  function countUnlocked() {
-    return keys.filter(k => !state.locks[k]).length;
-  }
-
-  function currentModelState() {
-    const model = modelFromValues(state.values);
-    return { length: state.values.length, width: state.values.width, height: state.values.height, void: state.values.void, balance: state.values.balance, parts: model.parts, weight: model.weight, model };
-  }
-
-  function updateRanges() {
-    for (const key of keys) {
-      const anchors = anchorsFromLocks(key, null);
-      const states = buildValidStates(anchors, false);
-      const r = rangeFromStates(states, key);
-      state.currentRanges[key] = r;
+  function fixedDimensionAnchors(active) {
+    const anchors = {};
+    for (const k of dimKeys) {
+      if (state.locks[k] || active === k) anchors[k] = Math.max(MIN_DIM_CM, finite(state.values[k], MIN_DIM_CM));
     }
+    return anchors;
   }
 
-  function validateUserValue(key, value) {
-    const r = state.currentRanges[key] || globalRanges[key];
-    return value >= r.min - 1e-6 && value <= r.max + 1e-6;
+  function dimsFromEnvelope(envelopeVolume, anchors, fallbackDims) {
+    const fixed = dimKeys.filter(k => Object.prototype.hasOwnProperty.call(anchors, k));
+    const dims = { ...fallbackDims };
+    const safeEnvelope = Math.max(MIN_DIM_CM ** 3, envelopeVolume);
+    if (fixed.length === 3) {
+      return { length: anchors.length, width: anchors.width, height: anchors.height };
+    }
+    if (fixed.length === 2) {
+      const free = dimKeys.find(k => !fixed.includes(k));
+      for (const k of fixed) dims[k] = anchors[k];
+      dims[free] = safeEnvelope / Math.max(0.001, dims[fixed[0]] * dims[fixed[1]]);
+    } else if (fixed.length === 1) {
+      const fixedKey = fixed[0];
+      const free = dimKeys.filter(k => k !== fixedKey);
+      dims[fixedKey] = anchors[fixedKey];
+      const side = Math.sqrt(safeEnvelope / Math.max(0.001, dims[fixedKey]));
+      dims[free[0]] = side;
+      dims[free[1]] = side;
+    } else {
+      const side = Math.cbrt(safeEnvelope);
+      dims.length = side;
+      dims.width = side;
+      dims.height = side;
+    }
+    for (const k of dimKeys) dims[k] = clamp(dims[k], MIN_DIM_CM, DIM_MAX_CM);
+    return dims;
+  }
+
+  function estimateEnvelopeForTarget(dims, voidPct, balancePct, targets) {
+    const b = clamp(balancePct, 0, 100) / 100;
+    const smallFrac = SMALL_DETAIL_MAX_FRACTION * b;
+    const largeFrac = 1 - smallFrac;
+    const qGuess = qDefaultFor(balancePct, dims);
+    let nOcc = null;
+    if (Object.prototype.hasOwnProperty.call(targets, 'parts')) {
+      const density = smallFrac + largeFrac / qGuess;
+      nOcc = targets.parts / Math.max(0.000001, density);
+    } else if (Object.prototype.hasOwnProperty.call(targets, 'weight')) {
+      const fill = smallFrac * SMALL_FILL + largeFrac * largeFill(qGuess);
+      nOcc = targets.weight / Math.max(0.000001, VOXEL_VOLUME * ABS_DENSITY * fill);
+    }
+    if (!Number.isFinite(nOcc) || nOcc <= 0) return productDims(dims);
+    const d = clamp(voidPct, VOID_MIN, VOID_MAX) / 100;
+    return nOcc * VOXEL_VOLUME / Math.max(0.01, 1 - d);
   }
 
   function solve(active = null) {
-    updateRanges();
-    const persistentLocks = keys.filter(k => state.locks[k]);
-    if (!active && persistentLocks.length === 0) {
-      const model = modelFromValues(state.values);
-      state.bearingSizeMm = model.bearingSizeMm;
-      state.values.parts = model.parts;
-      state.values.weight = model.weight;
-      writeControls();
-      render(model, { dims: { length: state.values.length, width: state.values.width, height: state.values.height }, limits: dimensionLimitsFromOccupied(model.volume, state.values.void) }, "No locked anchors yet. Default/current model is shown.");
-      return;
+    const prefVoid = clamp(finite(state.values.void, 50), VOID_MIN, VOID_MAX);
+    const prefBalance = clamp(finite(state.values.balance, 50), 0, 100);
+    let dims = dimsFromState();
+    const targets = targetsFromState(active);
+    const hasTargets = Object.keys(targets).length > 0;
+    const dimAnchors = fixedDimensionAnchors(active);
+    const fixedDimCount = Object.keys(dimAnchors).length;
+
+    // If a target is being driven and there is dimensional freedom, resize first instead of forcing void/detail to absorb everything.
+    if (hasTargets && fixedDimCount < 3 && (active === 'parts' || active === 'weight' || fixedDimCount === 0)) {
+      const envelopeTarget = estimateEnvelopeForTarget(dims, prefVoid, prefBalance, targets);
+      dims = dimsFromEnvelope(envelopeTarget, dimAnchors, dims);
     }
 
-    // Persistent rule: at least two visible parameters must remain unlocked.
-    // The active slider is NOT a persistent lock, but during dragging it SHOULD be a hard temporary anchor.
-    // This lets the two remaining unlocked parameters (for example void + detail balance) be mutually solvable.
-    const activeCanBeHardAnchor = !!active;
-    let anchors = anchorsFromLocks(null, activeCanBeHardAnchor ? active : null);
-    let states = buildValidStates(anchors, true);
-    let activeMode = active ? (activeCanBeHardAnchor ? "temporary anchor" : "preference") : "none";
-
-    // If the exact active value over-constrains the model, keep the persistent locks
-    // and choose the closest reachable state to the active value instead of pretending
-    // the active value is an extra lock.
-    if (!states.length && active) {
-      anchors = anchorsFromLocks(null, null);
-      states = buildValidStates(anchors, true);
-      activeMode = "preference";
+    const voidAnchored = state.locks.void || active === 'void';
+    const balanceAnchored = state.locks.balance || active === 'balance';
+    let model;
+    if (hasTargets) {
+      if (voidAnchored && balanceAnchored) model = evaluateModel(dims, prefVoid, prefBalance, targets);
+      else if (voidAnchored) model = searchBalance(dims, prefVoid, targets, prefBalance);
+      else if (balanceAnchored) model = searchVoid(dims, prefBalance, targets, prefVoid);
+      else model = searchVoidBalance(dims, targets, prefVoid, prefBalance);
+    } else {
+      model = evaluateModel(dims, prefVoid, prefBalance, {});
     }
 
-    if (!states.length) {
-      writeControls();
-      const model = modelFromValues(state.values);
-      render(model, { dims: { length: state.values.length, width: state.values.width, height: state.values.height }, limits: dimensionLimitsFromOccupied(model.volume, state.values.void) }, "No reachable state exists for the current locked anchors. Unlock one more parameter or change a locked value.");
-      return;
+    if (!model) model = evaluateModel(dims, prefVoid, prefBalance, {});
+    state.q = model.q;
+
+    // Write back solved values. Locked values and the active driver remain user-owned.
+    for (const k of dimKeys) {
+      if (!state.locks[k] && active !== k) state.values[k] = model.dims[k];
     }
+    if (!state.locks.void && active !== 'void') state.values.void = model.voidPct;
+    if (!state.locks.balance && active !== 'balance') state.values.balance = model.balancePct;
+    if (!state.locks.parts && active !== 'parts') state.values.parts = model.parts;
+    if (!state.locks.weight && active !== 'weight') state.values.weight = model.weight;
 
-    const rep = chooseRepresentativeState(states, active, activeCanBeHardAnchor && activeMode === "temporary anchor");
-    state.bearingSizeMm = rep.bearingSizeMm;
-
-    for (const k of keys) {
-      if (state.locks[k]) continue;
-      // If the active value is a hard anchor, keep what the user moved.
-      // If it is a preference, it is allowed to resolve to the nearest reachable state.
-      if (k === active && activeMode === "temporary anchor") continue;
-      state.values[k] = rep[k];
-    }
-
-    // Estimates are always rendered from final dimensions / void / balance / bearing.
-    const finalModel = modelFromValues(state.values);
-    state.bearingSizeMm = finalModel.bearingSizeMm;
-    if (!state.locks.parts && active !== 'parts') state.values.parts = finalModel.parts;
-    if (!state.locks.weight && active !== 'weight') state.values.weight = finalModel.weight;
-
-    updateRanges();
+    updateRanges(model);
     writeControls();
-    const dims = { length: state.values.length, width: state.values.width, height: state.values.height };
-    const modeText = active ? `${labels[active]} is the active ${activeMode}. ` : "";
-    render(finalModel, { dims, limits: dimensionLimitsFromOccupied(finalModel.volume, state.values.void) }, `${modeText}Unlocked parameters were solved from the current reachable state space; at least two visible parameters remain unlocked.`);
+
+    const lockList = keys.filter(k => state.locks[k]).map(k => labels[k]).join(', ') || 'none';
+    let note = active ? `${labels[active]} is the active driver. ` : '';
+    note += model.feasible ? 'Solved with fixed 8 mm voxel model.' : 'Closest reachable estimate; one or more locked targets are outside the current feasible range.';
+    render(model, note, lockList);
+  }
+
+  function updateRanges(model = null) {
+    const dims = dimsFromState();
+    const m = model || evaluateModel(dims, state.values.void, state.values.balance, {});
+    const pMin = m.smallVoxels + m.largeVoxels / Math.max(Q_MIN, m.qMax);
+    const pMax = m.smallVoxels + m.largeVoxels / Q_MIN;
+    const wMin = VOXEL_VOLUME * (m.smallVoxels * SMALL_FILL + m.largeVoxels * largeFill(m.qMax)) * ABS_DENSITY;
+    const wMax = VOXEL_VOLUME * (m.smallVoxels * SMALL_FILL + m.largeVoxels * largeFill(Q_MIN)) * ABS_DENSITY;
+    for (const k of keys) state.currentRanges[k] = { ...globalRanges[k] };
+    state.currentRanges.parts = { min: Math.max(1, Math.floor(pMin)), max: Math.max(2, Math.ceil(pMax)), step: 1 };
+    state.currentRanges.weight = { min: Math.max(1, Math.floor(wMin * 10) / 10), max: Math.max(1.1, Math.ceil(wMax * 10) / 10), step: 0.1 };
+  }
+
+  function validateUserValue(key, value) {
+    const r = globalRanges[key];
+    return value >= r.min - 1e-6 && value <= r.max + 1e-6;
   }
 
   function describeModel(dims, model) {
     const maxSide = Math.max(dims.length, dims.width, dims.height);
     const minSide = Math.min(dims.length, dims.width, dims.height);
     const ratio = maxSide / Math.max(minSide, 0.1);
-    const sizeClass = maxSide < 8 ? "very small" : maxSide < 16 ? "small" : maxSide < 32 ? "medium-sized" : maxSide < 60 ? "large" : "very large";
-    const shapeClass = ratio < 1.4 ? "compact, cube-like" : ratio < 2.2 ? "slightly elongated" : ratio < 4.0 ? "elongated and narrow" : "very long and narrow";
-    const dominant = maxSide === dims.height ? "vertical" : maxSide === dims.width ? "wide" : "horizontal";
-    const voidPct = state.values.void;
-    const voidClass = voidPct <= 20 ? "very low external void" : voidPct <= 40 ? "low external void" : voidPct <= 60 ? "balanced external void" : voidPct <= 75 ? "open structure" : "very open, airy structure";
-    const balance = state.values.balance;
-    const detailClass = balance <= 25 ? "mostly large structural parts" : balance <= 45 ? "simple-to-medium detail density" : balance <= 65 ? "medium-high detail density" : balance <= 85 ? "high detail density" : "very small-part-heavy detail density";
-    const densityText = model.partsPer100 < 35 ? "a simple, structural build" : model.partsPer100 < 70 ? "a balanced small-product style build" : model.partsPer100 < 110 ? "a detail-rich compact build" : "a very dense small-part-heavy build";
-    const text = `This is a ${sizeClass} ${shapeClass} LEGO model, approximately ${fmt(dims.length, 1)} × ${fmt(dims.width, 1)} × ${fmt(dims.height, 1)} cm. The proportions read as a ${dominant} object rather than a cube. The model has ${voidClass}, so ${voidPct <= 40 ? "most of the bounding volume is occupied by LEGO structure rather than empty space" : "the silhouette is partly shaped by open space and gaps"}. With about ${fmtInt(model.parts)} parts and ${fmtWeight(model.weight)} of estimated weight, it reads as ${densityText}. The ${fmt(balance, 0)}% detail balance indicates ${detailClass}, with ${pct(model.smallShare, 1)} of the occupied volume treated as small dense detail volume.`;
-    const tags = [sizeClass, shapeClass, dominant, voidClass, detailClass];
-    return { text, tags };
+    const sizeClass = maxSide < 8 ? 'very small' : maxSide < 16 ? 'small' : maxSide < 32 ? 'medium-sized' : maxSide < 60 ? 'large' : 'very large';
+    const shapeClass = ratio < 1.4 ? 'compact, cube-like' : ratio < 2.2 ? 'slightly elongated' : ratio < 4.0 ? 'elongated and narrow' : 'very long and narrow';
+    const dominant = maxSide === dims.height ? 'vertical' : maxSide === dims.width ? 'wide' : 'horizontal';
+    const voidClass = model.voidPct <= 20 ? 'very low external void' : model.voidPct <= 40 ? 'low external void' : model.voidPct <= 60 ? 'balanced external void' : model.voidPct <= 75 ? 'open structure' : 'very open, airy structure';
+    const detailClass = model.balancePct <= 25 ? 'mostly large bearing structure' : model.balancePct <= 50 ? 'moderate details' : model.balancePct <= 75 ? 'detail-rich' : 'small-detail-heavy';
+    const text = `This is a ${sizeClass} ${shapeClass} LEGO estimate, approximately ${fmt(dims.length,1)} × ${fmt(dims.width,1)} × ${fmt(dims.height,1)} cm. It uses a fixed 8 mm voxel system with about ${fmtInt(model.envelopeVoxels)} envelope voxels and ${fmtInt(model.occupiedVoxels)} occupied voxels. The ${fmt(model.voidPct,1)}% void reads as ${voidClass}. The ${fmt(model.balancePct,1)}% balance reserves ${pct(model.smallShare,1)} of occupied voxels for non-bearing small details; large structure is handled by average bearing coverage q ≈ ${fmt(model.q,2)} voxels.`;
+    return { text, tags: [sizeClass, shapeClass, dominant, voidClass, detailClass, `q ${fmt(model.q,1)}`] };
   }
 
   function renderDescription(dims, model) {
@@ -661,42 +505,42 @@
     if (!box || !tags) return;
     const d = describeModel(dims, model);
     box.innerHTML = `<p>${d.text}</p>`;
-    tags.innerHTML = d.tags.map(t => `<span>${t}</span>`).join('');
+    tags.innerHTML = d.tags.map(t => `<span class="description-chip">${t}</span>`).join('');
   }
 
-  function render(model, dimsInfo, note) {
-    const dims = dimsInfo.dims;
-    const limits = dimsInfo.limits;
-    el("metricDims").textContent = `${fmt(dims.length, 1)} × ${fmt(dims.width, 1)} × ${fmt(dims.height, 1)}`;
-    el("metricDimsSub").textContent = "cm envelope size";
-    el("metricParts").textContent = fmtInt(model.parts);
-    el("metricPartsSub").textContent = `${fmt(model.partsPer100, 1)} parts / 100 occupied cm³`;
-    el("metricWeight").textContent = fmtWeight(model.weight);
-    el("metricWeightSub").textContent = `${pct(model.weightedFill)} effective fill`;
-    el("metricBalance").textContent = `${fmt(state.values.balance, 1)}%`;
-    el("metricBalanceSub").textContent = `${pct(model.smallShare)} small dense volume share`;
-    el("envVol").textContent = `${fmtInt(model.envelopeVolume)} cm³`;
-    el("occVol").textContent = `${fmtInt(model.volume)} cm³`;
-    el("voidOut").textContent = `${fmt(state.values.void, 1)}%`;
-    el("cubeSide").textContent = fmtCm(model.cubeSide);
-    el("voxelSide").textContent = fmtCm(limits.voxelSide);
-    el("minSide").textContent = fmtCm(limits.minEnvelopeSide);
-    el("maxSide").textContent = fmtCm(limits.maxEnvelopeSide);
-    el("smallShare").textContent = pct(model.smallShare);
-    el("largeShare").textContent = pct(model.largeShare);
-    el("cPart").textContent = `${fmt(model.cPart, 2)} cm³ / part`;
-    el("partsPer100").textContent = fmt(model.partsPer100, 1);
-    el("bearingSize").textContent = `${fmt(model.bearingSizeMm, 1)} mm (min ${fmt(model.bearingMinMm, 1)}, max ${fmt(model.bearingMaxMm, 1)})`;
-    el("largeFill").textContent = pct(model.largeFill);
-    el("weightedFill").textContent = pct(model.weightedFill);
-    const lockList = keys.filter(k => state.locks[k]).map(k => labels[k]).join(", ") || "none";
-    el("solverStatus").className = "status good";
-    el("solverStatus").innerHTML = `<b>${note}</b><span>Locked anchors: ${lockList}. Active driver: ${state.lastChanged ? labels[state.lastChanged] : "none"}. At least two parameters remain unlocked.</span>`;
+  function render(model, note, lockList) {
+    const dims = model.dims;
+    el('metricDims').textContent = `${fmt(dims.length, 1)} × ${fmt(dims.width, 1)} × ${fmt(dims.height, 1)}`;
+    el('metricDimsSub').textContent = 'cm envelope size';
+    el('metricParts').textContent = fmtInt(model.parts);
+    el('metricPartsSub').textContent = `${fmt(model.partsPer100, 1)} parts / 100 occupied cm³`;
+    el('metricWeight').textContent = fmtWeight(model.weight);
+    el('metricWeightSub').textContent = `${pct(model.weightedFill)} effective fill`;
+    el('metricBalance').textContent = `${fmt(model.balancePct, 1)}%`;
+    el('metricBalanceSub').textContent = `${pct(model.smallShare)} small-detail voxel share`;
+    el('envVol').textContent = `${fmtInt(model.envelopeVolume)} cm³`;
+    el('occVol').textContent = `${fmtInt(model.volume)} cm³`;
+    el('voidOut').textContent = `${fmt(model.voidPct, 1)}%`;
+    el('cubeSide').textContent = fmtCm(model.cubeSide);
+    el('voxelSide').textContent = `${fmt(model.voxelSide, 1)} cm fixed`;
+    el('minSide').textContent = `${fmt(MIN_DIM_CM, 1)} cm`;
+    el('maxSide').textContent = `${fmt(model.maxSideVoxels, 1)} voxels longest side`;
+    const vg = el('voxelGrid'); if (vg) vg.textContent = `${fmtInt(model.envelopeVoxels)} env / ${fmtInt(model.occupiedVoxels)} occ`;
+    el('smallShare').textContent = `${pct(model.smallShare)} (${fmtInt(model.smallVoxels)} slots)`;
+    el('largeShare').textContent = `${pct(model.largeShare)} (${fmtInt(model.largeVoxels)} voxels)`;
+    el('cPart').textContent = `q ${fmt(model.q, 2)} voxels / part`;
+    el('partsPer100').textContent = fmt(model.partsPer100, 1);
+    el('bearingSize').textContent = `q ${fmt(model.q, 2)} / max ${fmt(model.qMax, 1)} (${fmt(model.qSpanMm, 1)} mm equiv.)`;
+    el('largeFill').textContent = pct(model.largeFill);
+    el('weightedFill').textContent = pct(model.weightedFill);
+    el('solverStatus').className = model.feasible ? 'status good' : 'status';
+    const warn = model.warnings && model.warnings.length ? `<br/><span>${model.warnings.join(' ')}</span>` : '';
+    el('solverStatus').innerHTML = `<b>${note}</b><span>Locked anchors: ${lockList}. Active driver: ${state.lastChanged ? labels[state.lastChanged] : 'none'}. q is hidden average bearing coverage, capped at 1×1×16 voxels.</span>${warn}`;
     const balances = [0, 25, 50, 75, 100];
-    el("sampleRows").innerHTML = balances.map(b => {
-      const sample = calcFromGeometry(model.volume, b, state.values.void, dims, null);
+    el('sampleRows').innerHTML = balances.map(b => {
+      const sample = evaluateModel(dims, model.voidPct, b, {});
       return `<tr><td>${b}%</td><td>${pct(sample.smallShare, 1)}</td><td>${fmtInt(sample.parts)}</td><td>${fmtWeight(sample.weight)}</td><td>${pct(sample.weightedFill, 1)}</td></tr>`;
-    }).join("");
+    }).join('');
     renderDescription(dims, model);
   }
 
@@ -704,14 +548,11 @@
     const range = el(`${key}-range`), number = el(`${key}-number`);
     if (!range || !number) return;
     const r = state.currentRanges[key] || globalRanges[key];
-    let min = Math.max(globalRanges[key].min, Math.floor(r.min * 10) / 10);
-    let max = Math.min(globalRanges[key].max, Math.ceil(r.max * 10) / 10);
+    let min = r.min, max = r.max;
     if (key === 'parts') { min = Math.max(1, Math.floor(r.min)); max = Math.max(min + 1, Math.ceil(r.max)); }
     if (key === 'weight') { min = Math.max(0.1, Math.floor(r.min * 10) / 10); max = Math.max(min + 0.1, Math.ceil(r.max * 10) / 10); }
-    if (key === 'void') { min = Math.max(0, Math.floor(r.min)); max = Math.min(90, Math.ceil(r.max)); }
-    if (key === 'balance') { min = Math.max(0, Math.floor(r.min)); max = Math.min(100, Math.ceil(r.max)); }
-    range.min = min; range.max = max; range.step = globalRanges[key].step;
-    number.min = min; number.max = max; number.step = globalRanges[key].step;
+    range.min = min; range.max = max; range.step = r.step;
+    number.min = min; number.max = max; number.step = r.step;
   }
 
   function writeControls() {
@@ -720,20 +561,22 @@
       const range = el(`${k}-range`), number = el(`${k}-number`);
       if (!range || !number) continue;
       let value = state.values[k];
-      if (k === "length" || k === "width" || k === "height") value = Number(value).toFixed(1);
-      if (k === "parts") value = Math.round(value);
-      if (k === "weight") value = Number(value).toFixed(1);
-      if (k === "void" || k === "balance") value = Number(value).toFixed(1);
+      if (k === 'length' || k === 'width' || k === 'height') value = Number(value).toFixed(1);
+      if (k === 'parts') value = Math.round(value);
+      if (k === 'weight') value = Number(value).toFixed(1);
+      if (k === 'void' || k === 'balance') value = Number(value).toFixed(1);
       range.value = value;
       number.value = value;
     }
     for (const k of keys) {
       const btn = el(`${k}-lock`);
       if (!btn) continue;
-      btn.classList.toggle("locked", !!state.locks[k]);
-      btn.textContent = state.locks[k] ? "🔒" : "🔓";
+      btn.classList.toggle('locked', !!state.locks[k]);
+      btn.textContent = state.locks[k] ? '🔒' : '🔓';
     }
   }
+
+  function countUnlocked() { return keys.filter(k => !state.locks[k]).length; }
 
   function createControl(key) {
     const parent = el(`control-${key}`);
@@ -744,51 +587,43 @@
     range.value = value;
     number.value = value;
     const onInput = raw => {
-      let v = finite(raw, state.values[key]);
+      const v = finite(raw, state.values[key]);
       if (!validateUserValue(key, v)) {
-        state.note = `${labels[key]} is outside its reachable range for the current locked anchors.`;
         writeControls();
         return;
       }
       state.values[key] = v;
       state.lastChanged = key;
-      state.note = `${labels[key]} is the active temporary anchor; unlocked values adapt within reachable ranges.`;
       solve(key);
     };
-    range.addEventListener("input", () => onInput(range.value));
-    number.addEventListener("change", () => onInput(number.value));
-    el(`${key}-lock`).addEventListener("click", () => {
+    range.addEventListener('input', () => onInput(range.value));
+    number.addEventListener('change', () => onInput(number.value));
+    el(`${key}-lock`).addEventListener('click', () => {
       if (!state.locks[key] && countUnlocked() <= MIN_UNLOCKED) {
-        state.note = "Cannot lock this value: at least two parameters must remain unlocked so the model can adapt.";
-        solve(null);
-        return;
-      }
-      const nextLocks = { ...state.locks, [key]: !state.locks[key] };
-      const testAnchors = {};
-      for (const k of keys) if (nextLocks[k]) testAnchors[k] = finite(state.values[k], 0);
-      if (nextLocks[key] && !buildValidStates(testAnchors, false).length) {
-        state.note = `Cannot lock ${labels[key]}: this would make the current constraint system unreachable.`;
+        state.note = 'Cannot lock this value: at least two parameters must remain unlocked so the model can adapt.';
         solve(null);
         return;
       }
       state.locks[key] = !state.locks[key];
       state.lastChanged = null;
-      state.note = `${labels[key]} was ${state.locks[key] ? "locked" : "unlocked"}.`;
       solve(null);
     });
   }
 
-  // Update outdated explanatory copy if present.
   const lockHelp = document.querySelector('.lock-help');
   if (lockHelp) {
-    lockHelp.innerHTML = '<span>Move any slider/input to make it the active temporary anchor.</span><span>🔒 locked = fixed anchor; the solver will not change it.</span><span>🔓 unlocked = solved from the current reachable range.</span><span>At least two parameters must remain unlocked so the model can adapt.</span>';
+    lockHelp.innerHTML = '<span>Move any slider/input to make it the active driver.</span><span>🔒 locked = fixed anchor; the solver will not change it.</span><span>🔓 unlocked = solved from the fixed 8 mm voxel model.</span><span>At least two parameters must remain unlocked so the model can adapt.</span>';
   }
 
+  // Initialize dependent default outputs before creating controls.
+  const initial = evaluateModel(dimsFromState(), state.values.void, state.values.balance, {});
+  state.values.parts = initial.parts;
+  state.values.weight = initial.weight;
+  updateRanges(initial);
   for (const k of keys) createControl(k);
   solve(null);
 })();
 </script>
-
 
 </body>
 </html>
