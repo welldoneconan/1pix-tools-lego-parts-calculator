@@ -12,6 +12,11 @@
     .tab-nav{position:sticky;top:0;z-index:50;margin:18px 0 18px;padding:10px;border:1px solid rgba(148,163,184,.32);border-radius:18px;background:rgba(15,23,42,.92);backdrop-filter:blur(14px);box-shadow:0 18px 60px rgba(0,0,0,.28);display:flex;align-items:center;gap:10px;flex-wrap:wrap}.tab-nav-label{font-size:11px;font-weight:950;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding:0 4px}.tab-btn{appearance:none;border:1px solid rgba(148,163,184,.28);border-radius:999px;background:rgba(255,255,255,.045);color:var(--text);padding:10px 15px;font-weight:900;font-size:13px;cursor:pointer;transition:.16s ease;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}.tab-btn:hover{border-color:rgba(96,165,250,.7);background:rgba(96,165,250,.14)}.tab-btn.active{background:var(--accent);border-color:var(--accent);color:#07111f;box-shadow:0 10px 30px rgba(96,165,250,.26)}.tab-page{display:block}.js-tabs .tab-page{display:none}.js-tabs .tab-page.active{display:block}.doc-card{border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.025));box-shadow:0 24px 80px rgba(0,0,0,.22);overflow:hidden}.doc-card-header{padding:18px 20px;border-bottom:1px solid var(--line)}.doc-card-header h2{margin:0;font-size:24px;letter-spacing:-.035em}.doc-card-header p{margin:6px 0 0;color:var(--muted);font-size:13px;max-width:860px}.doc-body{padding:20px;display:grid;gap:14px}.doc-section{padding:16px;border:1px solid rgba(148,163,184,.16);border-radius:16px;background:rgba(15,23,42,.42)}.doc-section h3{margin:0 0 8px;font-size:16px;letter-spacing:-.02em}.doc-section p{margin:0 0 10px;color:var(--muted);font-size:13px;line-height:1.55}.doc-section p:last-child{margin-bottom:0}.doc-section ul{margin:8px 0 0 18px;color:var(--muted);font-size:13px;line-height:1.55;padding:0}.formula{margin:9px 0;padding:10px 12px;border-radius:12px;background:rgba(2,6,23,.6);border:1px solid rgba(148,163,184,.16);font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;color:#dbeafe;font-size:12px;overflow:auto}.doc-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}@media(max-width:840px){.doc-two{grid-template-columns:1fr}.tab-nav{position:static}.tab-btn{flex:1;min-width:170px}}
 
   .doc-version{display:inline-flex;margin-top:10px;padding:5px 9px;border-radius:999px;background:rgba(52,211,153,.18);border:1px solid rgba(52,211,153,.4);color:#86efac;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+
+
+  .generated-description{margin-bottom:14px}.description-text{display:grid;gap:10px;color:var(--muted);font-size:13px;line-height:1.55}.description-text p{margin:0}.description-text strong{color:var(--text)}.description-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.description-chip{display:inline-flex;align-items:center;border:1px solid rgba(148,163,184,.22);border-radius:999px;background:rgba(15,23,42,.58);color:#dbeafe;font-size:11px;font-weight:800;padding:5px 8px;white-space:nowrap}
+
+  .target-fit{display:grid;gap:6px;margin-top:9px;font-size:12px}.target-fit span{display:block;padding:8px 10px;border-radius:12px;border:1px solid rgba(148,163,184,.18);background:rgba(255,255,255,.025)}.target-fit .fit-ok{color:#86efac;border-color:rgba(52,211,153,.45)}.target-fit .fit-warn{color:#fed7aa;border-color:rgba(251,146,60,.55);background:rgba(251,146,60,.08)}
   </style>
 <script>
     document.documentElement.classList.add('js-tabs');
@@ -56,10 +61,11 @@
 <div class="section-title">Assumptions</div>
 <div class="control" id="control-void"></div>
 <div class="control" id="control-balance"></div>
-<div class="status good"><b>How locks work</b><div class="lock-help"><span>Move any slider/input to make it the active driver.</span><span>🔒 locked = kept fixed when another value changes; you can still move it manually.</span><span>🔓 unlocked = allowed to adapt to the active driver and locked anchors.</span></div></div>
+<div class="status good"><b>How locks work</b><div class="lock-help"><span>Move any slider/input to make it the active driver.</span><span>🔒 locked = kept fixed when another value changes; you can still move it manually.</span><span>🔓 unlocked = allowed to adapt to the active driver and locked anchors.</span><span>At least two parameters must remain unlocked so the model can adapt.</span></div></div>
 </div>
 </aside>
 <section>
+<div class="card generated-description"><div class="card-header"><h2>Generated description</h2><span class="pill">auto</span></div><div class="card-body"><div id="modelDescription" class="description-text"><p>—</p></div><div id="modelDescriptionTags" class="description-meta"></div></div></div>
 <div class="metrics">
 <div class="metric"><div class="k">Length × width × height</div><div class="v" id="metricDims">—</div><div class="s" id="metricDimsSub">—</div></div>
 <div class="metric"><div class="k">Estimated parts</div><div class="v" id="metricParts">—</div><div class="s" id="metricPartsSub">—</div></div>
@@ -87,7 +93,7 @@
 </header>
 <div class="doc-body">
 <section class="doc-section"><h3>How the LEGO estimator works</h3><p>This calculator is designed as a linked estimation model. The user can start from any available information: model dimensions, desired part count, desired weight, void percentage, or small/large detail balance. The calculator then automatically updates every unlocked value that depends on it.</p><p>The main idea is that all parameters describe the same LEGO model from different angles.</p><p><strong>Dimensions</strong> define the outer bounding box of the model: length, width, and height. Together they create the envelope volume.</p><p><strong>Void</strong> describes how much of that outer volume is empty space. For example, a model with 50% void means only half of the outer bounding volume is actually occupied by LEGO structure.</p><p><strong>Detail balance</strong> describes the balance between large hollow structural parts and small dense decorative parts. A low value means the model is built mostly from large parts, so it is lighter and uses fewer pieces. A high value means more small parts, so the model becomes heavier and the part count increases.</p><p><strong>Part count</strong> is estimated from the occupied volume and the detail balance. More small details increase the number of parts needed for the same model volume.</p><p><strong>Weight</strong> is estimated from occupied volume, plastic density, and internal fill. Large LEGO structures are treated as more hollow, while small details are treated as denser.</p></section>
-<section class="doc-section"><h3>Locking logic</h3><p>Every major parameter has a lock. A locked value is treated as fixed. It will not be recalculated by the system.</p><p>However, a locked value can still be changed manually by the user. When the user changes a locked value, that new value becomes the new fixed target, and the rest of the unlocked parameters adapt around it.</p><p>The general rule is:</p><ul><li>The value you move becomes the active driver.</li><li>Locked values stay fixed.</li><li>Unlocked values are recalculated automatically.</li><li>At least one dependent value must remain unlocked, otherwise the model has no room to adapt.</li></ul><p>This makes the calculator behave like a constraint system rather than a one-way form.</p></section>
+<section class="doc-section"><h3>Locking logic</h3><p>Every major parameter has a lock. A locked value is treated as fixed. It will not be recalculated by the system.</p><p>However, a locked value can still be changed manually by the user. When the user changes a locked value, that new value becomes the new fixed target, and the rest of the unlocked parameters adapt around it.</p><p>The general rule is:</p><ul><li>The value you move becomes the active driver.</li><li>Locked values stay fixed.</li><li>Unlocked values are recalculated automatically.</li><li>At least two parameters must remain unlocked, otherwise the model has no room to adapt.</li></ul><p>This makes the calculator behave like a constraint system rather than a one-way form.</p></section>
 <section class="doc-section"><h3>Scenario 1: only dimensions are changed</h3><p>If the user changes length, width, or height, the calculator treats the new dimensions as the main geometric input.</p><p>The envelope volume is calculated from:</p><div class="formula">Length × Width × Height</div><p>Then the void percentage is applied to estimate the occupied LEGO volume. From that occupied volume, the calculator estimates the part count and weight.</p><p>This scenario is useful when the client gives approximate dimensions, or when the model size is already known from a Stud.io file.</p></section>
 <section class="doc-section"><h3>Scenario 2: one dimension is fixed, the others adapt</h3><p>If the user locks one side, for example length, and then changes the target weight or target part count, the calculator keeps that length fixed.</p><p>The other two dimensions are recalculated equally so the model keeps a balanced rectangular shape.</p><p>Example:</p><ul><li>Length is locked.</li><li>Desired weight is changed.</li><li>Width and height update together.</li><li>Part count updates from the new volume and detail balance.</li></ul><p>This is useful when the client has a strict maximum length, but the other dimensions can still change.</p></section>
 <section class="doc-section"><h3>Scenario 3: two dimensions are fixed</h3><p>If two dimensions are locked, the third dimension becomes the main adjustable side.</p><p>Example:</p><ul><li>Length and width are locked.</li><li>Desired part count is changed.</li><li>Height changes to make the new volume possible.</li></ul><p>This is useful for models that must fit a footprint, such as a display base, shelf, box insert, or packaging constraint.</p></section>
@@ -128,603 +134,558 @@
 
 </main>
 <script>
-    const ABS_DENSITY = 1.05;
-    const SMALL_SHARE_MIN = 0.05;
-    const SMALL_SHARE_MAX = 0.75;
-    const V_MIN = 20;
-    const V_MAX = 200000;
-    const BASE_VOXEL_MM = 8;
-    const SMALL_PART_VOLUME = 0.65;
-    const INTERNAL_FILL_FLOOR = 0.20;
-    const INTERNAL_FILL_POWER = 0.85;
-    const MAX_BEARING_SIZE_MM = 128;
+(function(){
+  const ABS_DENSITY = 1.05;
+  const SMALL_SHARE_MIN = 0.05;
+  const SMALL_SHARE_MAX = 0.75;
+  const V_MIN = 20;
+  const V_MAX = 200000;
+  const BASE_VOXEL_MM = 8;
+  const SMALL_PART_VOLUME = 0.65;
+  const INTERNAL_FILL_FLOOR = 0.20;
+  const INTERNAL_FILL_POWER = 0.85;
+  const MAX_BEARING_SIZE_MM = 128;
+  const MIN_UNLOCKED = 2;
 
-    const keys = ["length", "width", "height", "parts", "weight", "void", "balance"];
-    const dimKeys = ["length", "width", "height"];
-    const labels = {
-      length: "Length",
-      width: "Width",
-      height: "Height",
-      parts: "Desired parts",
-      weight: "Desired weight",
-      void: "External void",
-      balance: "Small / large detail balance"
-    };
-    const hints = { length: "cm", width: "cm", height: "cm", parts: "pcs", weight: "g", void: "%", balance: "%" };
+  const keys = ["length", "width", "height", "parts", "weight", "void", "balance"];
+  const dimKeys = ["length", "width", "height"];
+  const labels = {
+    length: "Length",
+    width: "Width",
+    height: "Height",
+    parts: "Desired parts",
+    weight: "Desired weight",
+    void: "External void",
+    balance: "Small / large detail balance"
+  };
+  const hints = { length: "cm", width: "cm", height: "cm", parts: "pcs", weight: "g", void: "%", balance: "%" };
+  const globalRanges = {
+    length: { min: 0.1, max: 300, step: 0.1 },
+    width: { min: 0.1, max: 300, step: 0.1 },
+    height: { min: 0.1, max: 300, step: 0.1 },
+    parts: { min: 1, max: 250000, step: 1 },
+    weight: { min: 1, max: 250000, step: 0.1 },
+    void: { min: 0, max: 90, step: 5 },
+    balance: { min: 0, max: 100, step: 5 }
+  };
 
-    const state = {
-      values: { length: 12.6, width: 12.6, height: 12.6, parts: 460, weight: 640, void: 50, balance: 50 },
-      locks: { length: false, width: false, height: false, parts: false, weight: false, void: false, balance: false },
-      currentOccupiedVolume: 1000,
-      currentEnvelopeVolume: 2000,
-      lastChanged: null,
-      note: "Default model: 1000 cm³ occupied LEGO volume, 50% void, 50% detail balance."
-    };
+  const state = {
+    values: { length: 12.6, width: 12.6, height: 12.6, parts: 460, weight: 640, void: 50, balance: 50 },
+    locks: { length: false, width: false, height: false, parts: false, weight: false, void: false, balance: false },
+    currentRanges: {},
+    lastChanged: null,
+    note: "Default model: 1000 cm³ occupied LEGO volume, 50% void, 50% detail balance."
+  };
 
-    const el = id => document.getElementById(id);
-    const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
-    const finite = (x, f = 0) => Number.isFinite(Number(x)) ? Number(x) : f;
-    const fmt = (x, d = 1) => Number.isFinite(x) ? x.toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d }) : "—";
-    const fmtInt = x => Number.isFinite(x) ? Math.round(x).toLocaleString() : "—";
-    const fmtWeight = g => !Number.isFinite(g) ? "—" : g >= 1000 ? `${fmt(g / 1000, 2)} kg` : `${fmt(g, 0)} g`;
-    const fmtCm = x => Number.isFinite(x) ? `${fmt(x, 1)} cm` : "—";
-    const pct = (x, d = 1) => Number.isFinite(x) ? `${fmt(x * 100, d)}%` : "—";
+  const el = id => document.getElementById(id);
+  const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+  const finite = (x, f = 0) => Number.isFinite(Number(x)) ? Number(x) : f;
+  const fmt = (x, d = 1) => Number.isFinite(x) ? x.toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d }) : "—";
+  const fmtInt = x => Number.isFinite(x) ? Math.round(x).toLocaleString() : "—";
+  const fmtWeight = g => !Number.isFinite(g) ? "—" : g >= 1000 ? `${fmt(g / 1000, 2)} kg` : `${fmt(g, 1)} g`;
+  const fmtCm = x => Number.isFinite(x) ? `${fmt(x, 1)} cm` : "—";
+  const pct = (x, d = 1) => Number.isFinite(x) ? `${fmt(x * 100, d)}%` : "—";
+  const unique = arr => Array.from(new Set(arr.map(v => Math.round(v * 1000) / 1000))).sort((a,b)=>a-b);
 
-    function productDims(vals = state.values) {
-      return Math.max(0.001, finite(vals.length, 1) * finite(vals.width, 1) * finite(vals.height, 1));
+  function productDims(vals = state.values) {
+    return Math.max(0.001, finite(vals.length, 1) * finite(vals.width, 1) * finite(vals.height, 1));
+  }
+
+  function smallShareFromBalance(balance) {
+    return SMALL_SHARE_MIN + (SMALL_SHARE_MAX - SMALL_SHARE_MIN) * (clamp(balance, 0, 100) / 100);
+  }
+
+  function progressiveCPart(volume) {
+    const minVolume = 120;
+    const cMin = 2.4;
+    const cGrowth = 1.6;
+    const refMax = 5000;
+    if (volume <= minVolume) return cMin;
+    return cMin + cGrowth * Math.log(volume / minVolume) / Math.log(refMax / minVolume);
+  }
+
+  function internalFill(sizeMm) {
+    const raw = INTERNAL_FILL_FLOOR + (1 - INTERNAL_FILL_FLOOR) * Math.pow(BASE_VOXEL_MM / Math.max(sizeMm, 0.001), INTERNAL_FILL_POWER);
+    return clamp(raw, INTERNAL_FILL_FLOOR, 1);
+  }
+
+  function calcFromVolume(volume, balance, voidPct) {
+    const voidRatio = clamp(voidPct / 100, 0, 0.9);
+    const occupiedVolume = clamp(volume, V_MIN, V_MAX);
+    const envelopeVolume = occupiedVolume / Math.max(1 - voidRatio, 0.01);
+    const cubeSide = Math.cbrt(envelopeVolume);
+    const smallShare = smallShareFromBalance(balance);
+    const largeShare = 1 - smallShare;
+    const cPart = progressiveCPart(occupiedVolume);
+    const parts = occupiedVolume * (smallShare / SMALL_PART_VOLUME + largeShare / cPart);
+    const partsPer100 = parts / occupiedVolume * 100;
+    const bearingSizeMm = clamp(cubeSide * 10 / 3, BASE_VOXEL_MM, MAX_BEARING_SIZE_MM);
+    const largeFill = internalFill(bearingSizeMm);
+    const weightedFill = smallShare * 1 + largeShare * largeFill;
+    const weight = occupiedVolume * weightedFill * ABS_DENSITY;
+    return { volume: occupiedVolume, voidRatio, envelopeVolume, cubeSide, smallShare, largeShare, cPart, parts, partsPer100, bearingSizeMm, largeFill, weightedFill, weight };
+  }
+
+  function modelFromValues(vals = state.values) {
+    const envelopeVolume = productDims(vals);
+    const voidPct = clamp(finite(vals.void, 50), 0, 90);
+    const occupiedVolume = envelopeVolume * Math.max(1 - voidPct / 100, 0.01);
+    return calcFromVolume(occupiedVolume, clamp(finite(vals.balance, 50), 0, 100), voidPct);
+  }
+
+  function dimensionLimitsFromOccupied(occupiedVolume, voidPct) {
+    const voidRatio = clamp(voidPct / 100, 0, 0.9);
+    const envelopeVolume = occupiedVolume / Math.max(1 - voidRatio, 0.01);
+    const occupiedCubeSide = Math.cbrt(Math.max(occupiedVolume, 0.001));
+    const voxelSide = occupiedCubeSide / 6;
+    const minEnvelopeSide = Math.max(0.1, voxelSide);
+    const maxEnvelopeSide = envelopeVolume / (minEnvelopeSide * minEnvelopeSide);
+    return { voxelSide, minEnvelopeSide, maxEnvelopeSide, envelopeVolume, occupiedVolume };
+  }
+
+  function partsTolerance(target) { return Math.max(0.15, Math.abs(target) * 0.006); }
+  function weightTolerance(target) { return Math.max(0.08, Math.abs(target) * 0.006); }
+
+  function solveVolumeForParts(targetParts, balance) {
+    const target = Math.max(1, targetParts);
+    let lo = V_MIN, hi = V_MAX;
+    for (let i = 0; i < 70; i++) {
+      const mid = (lo + hi) / 2;
+      const p = calcFromVolume(mid, balance, state.values.void).parts;
+      if (p < target) lo = mid; else hi = mid;
     }
+    return (lo + hi) / 2;
+  }
 
-    function smallShareFromBalance(balance) {
-      return SMALL_SHARE_MIN + (SMALL_SHARE_MAX - SMALL_SHARE_MIN) * (clamp(balance, 0, 100) / 100);
+  function solveVolumeForWeight(targetWeight, balance, voidPct) {
+    const target = Math.max(1, targetWeight);
+    let lo = V_MIN, hi = V_MAX;
+    for (let i = 0; i < 70; i++) {
+      const mid = (lo + hi) / 2;
+      const w = calcFromVolume(mid, balance, voidPct).weight;
+      if (w < target) lo = mid; else hi = mid;
     }
+    return (lo + hi) / 2;
+  }
 
-    function balanceFromSmallShare(smallShare) {
-      return clamp((smallShare - SMALL_SHARE_MIN) / (SMALL_SHARE_MAX - SMALL_SHARE_MIN) * 100, 0, 100);
+  function solveVoidForFixedEnvelopeByParts(envelopeVolume, balance, targetParts) {
+    const target = Math.max(1, targetParts);
+    const pAtVoid0 = calcFromVolume(envelopeVolume, balance, 0).parts;
+    const pAtVoid90 = calcFromVolume(envelopeVolume * 0.1, balance, 90).parts;
+    if (target > pAtVoid0 + partsTolerance(target) || target < pAtVoid90 - partsTolerance(target)) return null;
+    let lo = 0, hi = 90;
+    for (let i = 0; i < 60; i++) {
+      const mid = (lo + hi) / 2;
+      const occupied = envelopeVolume * (1 - mid / 100);
+      const p = calcFromVolume(occupied, balance, mid).parts;
+      if (p > target) lo = mid; else hi = mid;
     }
+    return (lo + hi) / 2;
+  }
 
-    function progressiveCPart(volume) {
-      const minVolume = 120;
-      const cMin = 2.4;
-      const cGrowth = 1.6;
-      const refMax = 5000;
-      if (volume <= minVolume) return cMin;
-      return cMin + cGrowth * Math.log(volume / minVolume) / Math.log(refMax / minVolume);
+  function solveVoidForFixedEnvelopeByWeight(envelopeVolume, balance, targetWeight) {
+    const target = Math.max(1, targetWeight);
+    const wAtVoid0 = calcFromVolume(envelopeVolume, balance, 0).weight;
+    const wAtVoid90 = calcFromVolume(envelopeVolume * 0.1, balance, 90).weight;
+    if (target > wAtVoid0 + weightTolerance(target) || target < wAtVoid90 - weightTolerance(target)) return null;
+    let lo = 0, hi = 90;
+    for (let i = 0; i < 60; i++) {
+      const mid = (lo + hi) / 2;
+      const occupied = envelopeVolume * (1 - mid / 100);
+      const w = calcFromVolume(occupied, balance, mid).weight;
+      if (w > target) lo = mid; else hi = mid;
     }
+    return (lo + hi) / 2;
+  }
 
-    function internalFill(sizeMm) {
-      const raw = INTERNAL_FILL_FLOOR + (1 - INTERNAL_FILL_FLOOR) * Math.pow(BASE_VOXEL_MM / Math.max(sizeMm, 0.001), INTERNAL_FILL_POWER);
-      return clamp(raw, INTERNAL_FILL_FLOOR, 1);
+  function makeRange(min, max, step) {
+    const out = [];
+    for (let x = min; x <= max + 1e-9; x += step) out.push(Math.round(x * 1000) / 1000);
+    return out;
+  }
+
+  function logSpace(min, max, count) {
+    const out = [];
+    const a = Math.log(min), b = Math.log(max);
+    for (let i = 0; i < count; i++) out.push(Math.exp(a + (b - a) * (i / Math.max(1, count - 1))));
+    return out;
+  }
+
+  function domainFor(key, anchors, precise = true) {
+    if (Object.prototype.hasOwnProperty.call(anchors, key)) return [finite(anchors[key], state.values[key])];
+    if (key === 'void') return unique([...makeRange(0, 90, precise ? 1 : 5), state.values.void]);
+    if (key === 'balance') return unique([...makeRange(0, 100, precise ? 1 : 5), state.values.balance]);
+    return [];
+  }
+
+  function volumeDomain(anchors) {
+    const list = [...logSpace(V_MIN, V_MAX, 72), modelFromValues().volume];
+    const fixedDims = dimKeys.filter(k => Object.prototype.hasOwnProperty.call(anchors, k));
+    if (fixedDims.length === 3) {
+      const e = anchors.length * anchors.width * anchors.height;
+      list.push(e, e * 0.1, e * 0.5, e * 0.9);
     }
+    return unique(list.filter(v => v >= V_MIN && v <= V_MAX));
+  }
 
-    function calcFromVolume(volume, balance, voidPct) {
-      const voidRatio = clamp(voidPct / 100, 0, 0.9);
-      const occupiedVolume = clamp(volume, V_MIN, V_MAX);
-      const envelopeVolume = occupiedVolume / Math.max(1 - voidRatio, 0.01);
-      const cubeSide = Math.cbrt(envelopeVolume);
-      const smallShare = smallShareFromBalance(balance);
-      const largeShare = 1 - smallShare;
-      const cPart = progressiveCPart(occupiedVolume);
-      const parts = occupiedVolume * (smallShare / SMALL_PART_VOLUME + largeShare / cPart);
-      const partsPer100 = parts / occupiedVolume * 100;
-      const bearingSizeMm = clamp(cubeSide * 10 / 3, BASE_VOXEL_MM, MAX_BEARING_SIZE_MM);
-      const largeFill = internalFill(bearingSizeMm);
-      const weightedFill = smallShare * 1 + largeShare * largeFill;
-      const weight = occupiedVolume * weightedFill * ABS_DENSITY;
-      return { volume: occupiedVolume, voidRatio, envelopeVolume, cubeSide, smallShare, largeShare, cPart, parts, partsPer100, bearingSizeMm, largeFill, weightedFill, weight };
+  function anchorsFromLocks(excludeKey = null, includeActive = null) {
+    const anchors = {};
+    for (const k of keys) {
+      if (state.locks[k] && k !== excludeKey) anchors[k] = finite(state.values[k], 0);
     }
+    if (includeActive && includeActive !== excludeKey) anchors[includeActive] = finite(state.values[includeActive], 0);
+    return anchors;
+  }
 
-    function dimensionLimitsFromOccupied(occupiedVolume, voidPct) {
-      const voidRatio = clamp(voidPct / 100, 0, 0.9);
-      const envelopeVolume = occupiedVolume / Math.max(1 - voidRatio, 0.01);
-      const occupiedCubeSide = Math.cbrt(Math.max(occupiedVolume, 0.001));
-      const voxelSide = occupiedCubeSide / 6;
-      // Voxel size comes from the no-void occupied cube and does not change after void is applied.
-      const minEnvelopeSide = Math.max(0.1, voxelSide);
-      const maxEnvelopeSide = envelopeVolume / (minEnvelopeSide * minEnvelopeSide);
-      return { voxelSide, minEnvelopeSide, maxEnvelopeSide, envelopeVolume, occupiedVolume };
+  function dimsFromEnvelope(envelopeVolume, occupiedVolume, voidPct, anchors) {
+    const fixedDims = dimKeys.filter(k => Object.prototype.hasOwnProperty.call(anchors, k));
+    const dims = {};
+    const eps = 1e-6;
+    if (fixedDims.length === 3) {
+      dims.length = anchors.length; dims.width = anchors.width; dims.height = anchors.height;
+      const fixedEnvelope = productDims(dims);
+      if (Math.abs(fixedEnvelope - envelopeVolume) > Math.max(0.05, fixedEnvelope * 0.006)) return null;
+    } else if (fixedDims.length === 2) {
+      const [a, b] = fixedDims;
+      const free = dimKeys.find(k => !fixedDims.includes(k));
+      dims[a] = finite(anchors[a], 1);
+      dims[b] = finite(anchors[b], 1);
+      dims[free] = envelopeVolume / Math.max(dims[a] * dims[b], eps);
+    } else if (fixedDims.length === 1) {
+      const a = fixedDims[0];
+      const [f1, f2] = dimKeys.filter(k => k !== a);
+      dims[a] = finite(anchors[a], 1);
+      const side = Math.sqrt(envelopeVolume / Math.max(dims[a], eps));
+      dims[f1] = side;
+      dims[f2] = side;
+    } else {
+      const side = Math.cbrt(envelopeVolume);
+      dims.length = side; dims.width = side; dims.height = side;
     }
-
-    function solveVolumeForParts(targetParts, balance) {
-      const target = Math.max(1, targetParts);
-      let lo = V_MIN, hi = V_MAX;
-      for (let i = 0; i < 80; i++) {
-        const mid = (lo + hi) / 2;
-        const p = calcFromVolume(mid, balance, state.values.void).parts;
-        if (p < target) lo = mid; else hi = mid;
-      }
-      return (lo + hi) / 2;
+    if (!dimKeys.every(k => Number.isFinite(dims[k]) && dims[k] > 0)) return null;
+    const limits = dimensionLimitsFromOccupied(occupiedVolume, voidPct);
+    for (const k of dimKeys) {
+      if (dims[k] < limits.minEnvelopeSide - 0.03) return null;
+      if (dims[k] > limits.maxEnvelopeSide + 0.03) return null;
     }
+    return dims;
+  }
 
-    function solveVolumeForWeight(targetWeight, balance, voidPct) {
-      const target = Math.max(1, targetWeight);
-      let lo = V_MIN, hi = V_MAX;
-      for (let i = 0; i < 80; i++) {
-        const mid = (lo + hi) / 2;
-        const w = calcFromVolume(mid, balance, voidPct).weight;
-        if (w < target) lo = mid; else hi = mid;
-      }
-      return (lo + hi) / 2;
-    }
+  function targetMatches(stateObj, anchors) {
+    if (Object.prototype.hasOwnProperty.call(anchors, 'parts') && Math.abs(stateObj.parts - anchors.parts) > partsTolerance(anchors.parts)) return false;
+    if (Object.prototype.hasOwnProperty.call(anchors, 'weight') && Math.abs(stateObj.weight - anchors.weight) > weightTolerance(anchors.weight)) return false;
+    return true;
+  }
 
-    function solveBalanceForParts(volume, targetParts) {
-      const target = Math.max(1, targetParts);
-      const p0 = calcFromVolume(volume, 0, state.values.void).parts;
-      const p1 = calcFromVolume(volume, 100, state.values.void).parts;
-      if (target <= p0) return 0;
-      if (target >= p1) return 100;
-      let lo = 0, hi = 100;
-      for (let i = 0; i < 70; i++) {
-        const mid = (lo + hi) / 2;
-        const p = calcFromVolume(volume, mid, state.values.void).parts;
-        if (p < target) lo = mid; else hi = mid;
-      }
-      return (lo + hi) / 2;
-    }
+  function pushState(states, occupiedVolume, voidPct, balance, anchors) {
+    if (!Number.isFinite(occupiedVolume) || occupiedVolume < V_MIN || occupiedVolume > V_MAX) return;
+    if (!Number.isFinite(voidPct) || voidPct < -1e-6 || voidPct > 90 + 1e-6) return;
+    if (!Number.isFinite(balance) || balance < -1e-6 || balance > 100 + 1e-6) return;
+    const v = clamp(voidPct, 0, 90);
+    const b = clamp(balance, 0, 100);
+    const model = calcFromVolume(occupiedVolume, b, v);
+    const dims = dimsFromEnvelope(model.envelopeVolume, model.volume, v, anchors);
+    if (!dims) return;
+    const s = { length: dims.length, width: dims.width, height: dims.height, void: v, balance: b, parts: model.parts, weight: model.weight, model };
+    if (!targetMatches(s, anchors)) return;
+    states.push(s);
+  }
 
-    function solveBalanceForWeight(volume, voidPct, targetWeight) {
-      const target = Math.max(1, targetWeight);
-      const w0 = calcFromVolume(volume, 0, voidPct).weight;
-      const w1 = calcFromVolume(volume, 100, voidPct).weight;
-      if (target <= w0) return 0;
-      if (target >= w1) return 100;
-      let lo = 0, hi = 100;
-      for (let i = 0; i < 70; i++) {
-        const mid = (lo + hi) / 2;
-        const w = calcFromVolume(volume, mid, voidPct).weight;
-        if (w < target) lo = mid; else hi = mid;
-      }
-      return (lo + hi) / 2;
-    }
+  function buildValidStates(anchors, precise = true) {
+    const states = [];
+    const allDimsFixed = dimKeys.every(k => Object.prototype.hasOwnProperty.call(anchors, k));
+    const hasParts = Object.prototype.hasOwnProperty.call(anchors, 'parts');
+    const hasWeight = Object.prototype.hasOwnProperty.call(anchors, 'weight');
+    const balances = domainFor('balance', anchors, precise);
+    const voids = domainFor('void', anchors, precise);
+    const fixedEnvelope = allDimsFixed ? anchors.length * anchors.width * anchors.height : null;
 
-    function solveVolumeAndBalanceForPartsWeight(targetParts, targetWeight, voidPct) {
-      let best = null;
-      for (let b = 0; b <= 100; b += 0.25) {
-        const volume = solveVolumeForParts(targetParts, b);
-        const model = calcFromVolume(volume, b, voidPct);
-        const err = Math.abs(model.weight - targetWeight);
-        if (!best || err < best.err) best = { err, volume, balance: b, model };
-      }
-      return best;
-    }
-
-    function solveVoidForWeight(volume, balance, targetWeight) {
-      const target = Math.max(1, targetWeight);
-      let best = { voidPct: state.values.void, err: Infinity };
-      for (let v = 0; v <= 90; v += 0.25) {
-        const w = calcFromVolume(volume, balance, v).weight;
-        const err = Math.abs(w - target);
-        if (err < best.err) best = { voidPct: v, err };
-      }
-      return clamp(Math.round(best.voidPct / 5) * 5, 0, 90);
-    }
-
-    function solveVoidForFixedEnvelopeParts(envelopeVolume, balance, targetParts) {
-      const target = Math.max(1, targetParts);
-      let best = { voidPct: state.values.void, err: Infinity };
-      for (let v = 0; v <= 90; v += 0.25) {
-        const occupied = envelopeVolume * (1 - v / 100);
-        const p = calcFromVolume(occupied, balance, v).parts;
-        const err = Math.abs(p - target);
-        if (err < best.err) best = { voidPct: v, err };
-      }
-      return clamp(Math.round(best.voidPct / 5) * 5, 0, 90);
-    }
-
-    function solveVoidForFixedEnvelopeWeight(envelopeVolume, balance, targetWeight) {
-      const target = Math.max(1, targetWeight);
-      let best = { voidPct: state.values.void, err: Infinity };
-      for (let v = 0; v <= 90; v += 0.25) {
-        const occupied = envelopeVolume * (1 - v / 100);
-        const w = calcFromVolume(occupied, balance, v).weight;
-        const err = Math.abs(w - target);
-        if (err < best.err) best = { voidPct: v, err };
-      }
-      return clamp(best.voidPct, 0, 90);
-    }
-
-    function modelFromFixedEnvelope(envelopeVolume, voidPct, balance) {
-      const occupied = envelopeVolume * Math.max(1 - voidPct / 100, 0.01);
-      return calcFromVolume(occupied, balance, voidPct);
-    }
-
-    function balanceForFixedEnvelopeParts(envelopeVolume, voidPct, targetParts) {
-      const occupied = envelopeVolume * Math.max(1 - voidPct / 100, 0.01);
-      const cPart = progressiveCPart(occupied);
-      const partDensity = Math.max(1, targetParts) / occupied;
-      const denom = (1 / SMALL_PART_VOLUME) - (1 / cPart);
-      if (Math.abs(denom) < 1e-9) return 50;
-      const smallShare = (partDensity - (1 / cPart)) / denom;
-      return balanceFromSmallShare(smallShare);
-    }
-
-    function solveVoidBalanceForFixedEnvelopePartsWeight(envelopeVolume, targetParts, targetWeight) {
-      const targetP = Math.max(1, targetParts);
-      const targetW = Math.max(1, targetWeight);
-      let best = null;
-      for (let v = 0; v <= 90; v += 0.05) {
-        const bRaw = balanceForFixedEnvelopeParts(envelopeVolume, v, targetP);
-        const b = clamp(bRaw, 0, 100);
-        const model = modelFromFixedEnvelope(envelopeVolume, v, b);
-        const partErr = Math.abs(model.parts - targetP) / targetP;
-        const weightErr = Math.abs(model.weight - targetW) / targetW;
-        const err = partErr * partErr * 4 + weightErr * weightErr;
-        if (!best || err < best.err) best = { err, voidPct: v, balance: b, model, partErr, weightErr };
-      }
-      if (!best) return { voidPct: state.values.void, balance: state.values.balance, exact: false, model: modelFromFixedEnvelope(envelopeVolume, state.values.void, state.values.balance) };
-      best.exact = best.partErr < 0.01 && best.weightErr < 0.01;
-      return best;
-    }
-
-    function activeKey() {
-      return keys.includes(state.lastChanged) ? state.lastChanged : null;
-    }
-
-    function isFixed(key, active) {
-      return !!state.locks[key] || active === key;
-    }
-
-    function validateLocks(active) {
-      const allLocked = keys.every(k => state.locks[k]);
-      if (allLocked) {
-        const unlock = ["weight", "parts", "height", "width", "length", "balance", "void"].find(k => k !== active) || "weight";
-        state.locks[unlock] = false;
-        state.note = `${labels[unlock]} was auto-unlocked because at least one value must be allowed to adapt.`;
-      }
-    }
-
-    function solveDimensionsForEnvelope(envelopeVolume, voidPct, active) {
-      const dims = {
-        length: finite(state.values.length, 1),
-        width: finite(state.values.width, 1),
-        height: finite(state.values.height, 1)
-      };
-
-      const occupiedVolume = envelopeVolume * Math.max(1 - voidPct / 100, 0.01);
-      const limits = dimensionLimitsFromOccupied(occupiedVolume, voidPct);
-      const minSide = limits.minEnvelopeSide;
-      const fixedDims = dimKeys.filter(k => isFixed(k, active));
-
-      // Important rule: locked dimensions are anchors, not solver outputs.
-      // A locked dimension may change only when the user moves that exact control.
-      // Other locked dimensions are never clamped or overwritten here; instead
-      // unlocked dimensions/void/balance/parts/weight must adapt around them.
-      if (fixedDims.length === 0) {
-        const side = Math.cbrt(envelopeVolume);
-        dims.length = side;
-        dims.width = side;
-        dims.height = side;
-      } else if (fixedDims.length === 1) {
-        const a = fixedDims[0];
-        const fixedA = Math.max(0.001, dims[a]);
-        let rest = Math.sqrt(envelopeVolume / fixedA);
-        const free = dimKeys.filter(k => k !== a);
-        if (rest < minSide) {
-          rest = minSide;
-          envelopeVolume = fixedA * rest * rest;
-          state.note = `Unlocked dimensions reached the voxel minimum; ${labels[a]} was kept fixed.`;
+    if (allDimsFixed) {
+      if (hasParts) {
+        for (const b of balances) {
+          const v = Object.prototype.hasOwnProperty.call(anchors, 'void') ? anchors.void : solveVoidForFixedEnvelopeByParts(fixedEnvelope, b, anchors.parts);
+          if (v == null) continue;
+          pushState(states, fixedEnvelope * (1 - v / 100), v, b, anchors);
         }
-        dims[free[0]] = rest;
-        dims[free[1]] = rest;
-      } else if (fixedDims.length === 2) {
-        const [a, b] = fixedDims;
-        const free = dimKeys.find(k => !fixedDims.includes(k));
-        const fixedArea = Math.max(0.001, dims[a] * dims[b]);
-        let c = envelopeVolume / fixedArea;
-        if (c < minSide) {
-          c = minSide;
-          envelopeVolume = fixedArea * c;
-          state.note = `${labels[free]} reached the voxel minimum; locked dimensions were kept fixed.`;
+      } else if (hasWeight) {
+        for (const b of balances) {
+          const v = Object.prototype.hasOwnProperty.call(anchors, 'void') ? anchors.void : solveVoidForFixedEnvelopeByWeight(fixedEnvelope, b, anchors.weight);
+          if (v == null) continue;
+          pushState(states, fixedEnvelope * (1 - v / 100), v, b, anchors);
         }
-        dims[free] = c;
       } else {
-        // All three dimensions are fixed/active. The envelope is whatever the
-        // locked dimensions say it is. No dimension should be recalculated.
-        envelopeVolume = productDims(dims);
+        for (const v of voids) for (const b of balances) pushState(states, fixedEnvelope * (1 - v / 100), v, b, anchors);
       }
-
-      const finalOccupiedVolume = envelopeVolume * Math.max(1 - voidPct / 100, 0.01);
-      return { dims, limits: dimensionLimitsFromOccupied(finalOccupiedVolume, voidPct), envelopeVolume };
+      return states;
     }
 
-    function updateControlRanges(model, dimsInfo) {
-      const limits = dimsInfo.limits;
-      const minDim = Math.max(0.1, limits.minEnvelopeSide);
-      const maxDim = Math.max(minDim + 0.1, limits.maxEnvelopeSide);
-      for (const k of dimKeys) {
-        const r = el(`${k}-range`), n = el(`${k}-number`);
-        if (!r || !n) continue;
-        const current = Math.max(0.1, finite(state.values[k], 1));
-        const otherKeys = dimKeys.filter(dim => dim !== k);
-        const otherProduct = Math.max(0.001, finite(state.values[otherKeys[0]], 1) * finite(state.values[otherKeys[1]], 1));
-        const voidRatio = clamp(state.values.void / 100, 0, 0.9);
-        const minEnvelopeByVolume = V_MIN / Math.max(1 - voidRatio, 0.01);
-        const maxEnvelopeByVolume = V_MAX / Math.max(1 - voidRatio, 0.01);
-        let localMin = Math.max(0.1, Math.min(minDim, minEnvelopeByVolume / otherProduct));
-        let localMax = Math.max(localMin + 0.1, Math.min(maxEnvelopeByVolume / otherProduct, maxDim));
-        // The current locked value must remain visible and editable. Range limits
-        // are guidance for future movement, not permission for the solver to
-        // overwrite a locked value.
-        localMin = Math.min(localMin, current);
-        localMax = Math.max(localMax, current);
-        r.min = localMin.toFixed(1); r.max = localMax.toFixed(1); r.step = 0.1;
-        n.min = localMin.toFixed(1); n.max = localMax.toFixed(1); n.step = 0.1;
+    if (hasParts) {
+      for (const b of balances) {
+        const occupied = solveVolumeForParts(anchors.parts, b);
+        for (const v of voids) pushState(states, occupied, v, b, anchors);
       }
-
-      const minParts = calcFromVolume(V_MIN, state.values.balance, state.values.void).parts;
-      const maxParts = calcFromVolume(V_MAX, state.values.balance, state.values.void).parts;
-      el("parts-range").min = Math.floor(minParts); el("parts-range").max = Math.ceil(maxParts); el("parts-range").step = 1;
-      el("parts-number").min = Math.floor(minParts); el("parts-number").max = Math.ceil(maxParts); el("parts-number").step = 1;
-
-      const minWeight = calcFromVolume(V_MIN, state.values.balance, state.values.void).weight;
-      const maxWeight = calcFromVolume(V_MAX, state.values.balance, state.values.void).weight;
-      el("weight-range").min = Math.floor(minWeight); el("weight-range").max = Math.ceil(maxWeight); el("weight-range").step = 0.1;
-      el("weight-number").min = Math.floor(minWeight); el("weight-number").max = Math.ceil(maxWeight); el("weight-number").step = 0.1;
+    } else if (hasWeight) {
+      for (const b of balances) {
+        for (const v of voids) {
+          const occupied = solveVolumeForWeight(anchors.weight, b, v);
+          pushState(states, occupied, v, b, anchors);
+        }
+      }
+    } else {
+      const volumes = volumeDomain(anchors);
+      for (const occupied of volumes) for (const v of voids) for (const b of balances) pushState(states, occupied, v, b, anchors);
     }
+    return states;
+  }
 
-    function solve() {
-      const active = activeKey();
-      const anchorValues = { ...state.values };
-      validateLocks(active);
+  function rangeFromStates(states, key) {
+    if (!states.length) return { ...globalRanges[key] };
+    const vals = states.map(s => s[key]).filter(Number.isFinite);
+    if (!vals.length) return { ...globalRanges[key] };
+    return { min: Math.min(...vals), max: Math.max(...vals), step: globalRanges[key].step };
+  }
 
-      let voidPct = clamp(finite(state.values.void, 50), 0, 90);
-      let balance = clamp(finite(state.values.balance, 50), 0, 100);
-      state.values.void = voidPct;
-      state.values.balance = balance;
+  function median(vals) {
+    const a = vals.filter(Number.isFinite).sort((x,y)=>x-y);
+    if (!a.length) return NaN;
+    const mid = Math.floor(a.length / 2);
+    return a.length % 2 ? a[mid] : (a[mid-1] + a[mid]) / 2;
+  }
 
-      let occupiedVolume = clamp(state.currentOccupiedVolume, V_MIN, V_MAX);
-      let envelopeVolume = Math.max(occupiedVolume / Math.max(1 - voidPct / 100, 0.01), 0.001);
-      let note = state.note || "Updated from current anchors.";
-
-      const fixedParts = isFixed("parts", active);
-      const fixedWeight = isFixed("weight", active);
-      const fixedBalance = isFixed("balance", active);
-      const fixedVoid = isFixed("void", active);
-      const fixedDims = dimKeys.filter(k => isFixed(k, active));
-      const allDimsFixed = fixedDims.length === 3;
-
-      if (allDimsFixed && !fixedParts && !fixedWeight) {
-        envelopeVolume = productDims(state.values);
-        occupiedVolume = envelopeVolume * Math.max(1 - voidPct / 100, 0.01);
-        note = active === "void" ? "Void changed while all dimensions stayed fixed." : "Volume was calculated from the fixed dimensions and current void.";
-      } else if (fixedParts && fixedWeight) {
-        const targetParts = Math.max(1, finite(state.values.parts, 1));
-        const targetWeight = Math.max(1, finite(state.values.weight, 1));
-        if (allDimsFixed && !fixedVoid && !fixedBalance) {
-          envelopeVolume = productDims(state.values);
-          const coupled = solveVoidBalanceForFixedEnvelopePartsWeight(envelopeVolume, targetParts, targetWeight);
-          voidPct = coupled.voidPct;
-          balance = coupled.balance;
-          state.values.void = voidPct;
-          state.values.balance = balance;
-          occupiedVolume = envelopeVolume * Math.max(1 - voidPct / 100, 0.01);
-          note = coupled.exact
-            ? "Void and detail balance were recalculated together to satisfy fixed dimensions, parts, and active weight."
-            : "Void and detail balance were recalculated together, but this target is near or outside the reachable range with the current locks.";
-        } else if (!fixedBalance) {
-          const result = solveVolumeAndBalanceForPartsWeight(targetParts, targetWeight, voidPct);
-          occupiedVolume = result.volume;
-          balance = result.balance;
-          state.values.balance = balance;
-          note = "Detail balance was recalculated to satisfy both locked/active parts and weight.";
-        } else {
-          occupiedVolume = solveVolumeForParts(targetParts, balance);
-          if (!fixedVoid) {
-            voidPct = solveVoidForWeight(occupiedVolume, balance, targetWeight);
-            state.values.void = voidPct;
-            note = "Void was recalculated to satisfy both locked/active parts and weight with fixed balance.";
-          } else {
-            note = "Parts and weight are both fixed with fixed void and balance; the closest valid state is shown.";
-          }
-        }
-        envelopeVolume = occupiedVolume / Math.max(1 - voidPct / 100, 0.01);
-      } else if (fixedParts) {
-        const targetParts = Math.max(1, finite(state.values.parts, 1));
-        if (allDimsFixed) {
-          envelopeVolume = productDims(state.values);
-          if (!fixedVoid) {
-            voidPct = solveVoidForFixedEnvelopeParts(envelopeVolume, balance, targetParts);
-            state.values.void = voidPct;
-            occupiedVolume = envelopeVolume * Math.max(1 - voidPct / 100, 0.01);
-            note = "Void was recalculated so fixed dimensions can match the active/locked part count.";
-          } else {
-            occupiedVolume = envelopeVolume * Math.max(1 - voidPct / 100, 0.01);
-            if (!fixedBalance) {
-              balance = solveBalanceForParts(occupiedVolume, targetParts);
-              state.values.balance = balance;
-              note = "Detail balance was recalculated so fixed dimensions can match the active/locked part count.";
-            } else {
-              note = "Fixed dimensions, void, balance, and parts over-constrain the model; the closest valid state is shown.";
-            }
-          }
-        } else {
-          occupiedVolume = solveVolumeForParts(targetParts, balance);
-          envelopeVolume = occupiedVolume / Math.max(1 - voidPct / 100, 0.01);
-          note = "Occupied volume was recalculated from the active/locked part count.";
-        }
-      } else if (fixedWeight) {
-        const targetWeight = Math.max(1, finite(state.values.weight, 1));
-        if (allDimsFixed) {
-          envelopeVolume = productDims(state.values);
-          if (!fixedVoid) {
-            voidPct = solveVoidForFixedEnvelopeWeight(envelopeVolume, balance, targetWeight);
-            state.values.void = voidPct;
-            occupiedVolume = envelopeVolume * Math.max(1 - voidPct / 100, 0.01);
-            note = "Void was recalculated so fixed dimensions can match the active/locked weight.";
-          } else {
-            occupiedVolume = envelopeVolume * Math.max(1 - voidPct / 100, 0.01);
-            if (!fixedBalance) {
-              balance = solveBalanceForWeight(occupiedVolume, voidPct, targetWeight);
-              state.values.balance = balance;
-              note = "Detail balance was recalculated so fixed dimensions can match the active/locked weight.";
-            } else {
-              note = "Fixed dimensions, void, balance, and weight over-constrain the model; the closest valid state is shown.";
-            }
-          }
-        } else {
-          occupiedVolume = solveVolumeForWeight(targetWeight, balance, voidPct);
-          envelopeVolume = occupiedVolume / Math.max(1 - voidPct / 100, 0.01);
-          note = "Occupied volume was recalculated from the active/locked weight.";
-        }
-      } else if (active === "void") {
-        occupiedVolume = state.currentOccupiedVolume;
-        envelopeVolume = occupiedVolume / Math.max(1 - voidPct / 100, 0.01);
-        note = "Void changed; occupied LEGO volume stayed fixed and unlocked dimensions adapted.";
-      } else if (active === "balance") {
-        occupiedVolume = state.currentOccupiedVolume;
-        envelopeVolume = occupiedVolume / Math.max(1 - voidPct / 100, 0.01);
-        note = "Detail balance changed; volume stayed fixed and parts/weight adapted.";
-      } else if (fixedDims.length > 0 && fixedDims.length < 3) {
-        envelopeVolume = state.currentEnvelopeVolume;
-        occupiedVolume = envelopeVolume * Math.max(1 - voidPct / 100, 0.01);
-        note = "Envelope volume was preserved; unlocked dimensions adapted around the active/locked side.";
-      } else {
-        occupiedVolume = state.currentOccupiedVolume;
-        envelopeVolume = occupiedVolume / Math.max(1 - voidPct / 100, 0.01);
-        note = "Current occupied volume was preserved; unlocked values adapted.";
-      }
-
-      envelopeVolume = occupiedVolume / Math.max(1 - voidPct / 100, 0.01);
-      if (allDimsFixed && !(fixedParts || fixedWeight)) envelopeVolume = productDims(state.values);
-
-      let dimsInfo = solveDimensionsForEnvelope(envelopeVolume, voidPct, active);
-      let dims = dimsInfo.dims;
-      envelopeVolume = dimsInfo.envelopeVolume;
-      occupiedVolume = envelopeVolume * Math.max(1 - voidPct / 100, 0.01);
-
-      const model = calcFromVolume(occupiedVolume, balance, voidPct);
-      state.currentOccupiedVolume = model.volume;
-      state.currentEnvelopeVolume = model.envelopeVolume;
-
-      const computedValues = {
-        length: dims.length,
-        width: dims.width,
-        height: dims.height,
-        parts: model.parts,
-        weight: model.weight,
-        balance: balance,
-        void: voidPct
-      };
-
-      // Preserve every locked non-active input. This is the central constraint
-      // behavior: a lock means “do not recalculate this value”. The user can
-      // still move that exact locked control, in which case it is the active
-      // driver and the new value is accepted.
+  function chooseRepresentativeState(states, active) {
+    if (!states.length) return null;
+    const med = {};
+    for (const k of keys) med[k] = median(states.map(s => s[k]));
+    const ranges = {};
+    for (const k of keys) ranges[k] = rangeFromStates(states, k);
+    let best = states[0], bestScore = Infinity;
+    for (const s of states) {
+      let score = 0;
       for (const k of keys) {
-        if (state.locks[k] && k !== active) state.values[k] = anchorValues[k];
-        else state.values[k] = computedValues[k];
+        if (state.locks[k] || k === active) continue;
+        const span = Math.max(0.001, ranges[k].max - ranges[k].min);
+        score += Math.pow((s[k] - med[k]) / span, 2);
       }
+      if (score < bestScore) { best = s; bestScore = score; }
+    }
+    return best;
+  }
 
-      const displayedDims = {
-        length: state.values.length,
-        width: state.values.width,
-        height: state.values.height
-      };
-      const displayedEnvelopeVolume = productDims(displayedDims);
-      const displayedOccupiedVolume = displayedEnvelopeVolume * Math.max(1 - state.values.void / 100, 0.01);
-      const displayedDimsInfo = {
-        dims: displayedDims,
-        limits: dimensionLimitsFromOccupied(displayedOccupiedVolume, state.values.void),
-        envelopeVolume: displayedEnvelopeVolume
-      };
+  function countUnlocked() {
+    return keys.filter(k => !state.locks[k]).length;
+  }
 
-      updateControlRanges(model, displayedDimsInfo);
+  function currentModelState() {
+    const model = modelFromValues(state.values);
+    return { length: state.values.length, width: state.values.width, height: state.values.height, void: state.values.void, balance: state.values.balance, parts: model.parts, weight: model.weight, model };
+  }
+
+  function updateRanges() {
+    for (const key of keys) {
+      const anchors = anchorsFromLocks(key, null);
+      const states = buildValidStates(anchors, false);
+      const r = rangeFromStates(states, key);
+      state.currentRanges[key] = r;
+    }
+  }
+
+  function validateUserValue(key, value) {
+    const r = state.currentRanges[key] || globalRanges[key];
+    return value >= r.min - 1e-6 && value <= r.max + 1e-6;
+  }
+
+  function solve(active = null) {
+    updateRanges();
+    const persistentLocks = keys.filter(k => state.locks[k]);
+    if (!active && persistentLocks.length === 0) {
+      const model = modelFromValues(state.values);
+      state.values.parts = model.parts;
+      state.values.weight = model.weight;
       writeControls();
-      render(model, displayedDimsInfo, note);
+      render(model, { dims: { length: state.values.length, width: state.values.width, height: state.values.height }, limits: dimensionLimitsFromOccupied(model.volume, state.values.void) }, "No locked anchors yet. Default/current model is shown.");
+      return;
     }
 
-    function render(model, dimsInfo, note) {
-      const dims = dimsInfo.dims;
-      const limits = dimsInfo.limits;
-      el("metricDims").textContent = `${fmt(dims.length, 1)} × ${fmt(dims.width, 1)} × ${fmt(dims.height, 1)}`;
-      el("metricDimsSub").textContent = "cm envelope size";
-      el("metricParts").textContent = fmtInt(model.parts);
-      el("metricPartsSub").textContent = `${fmt(model.partsPer100, 1)} parts / 100 occupied cm³`;
-      el("metricWeight").textContent = fmtWeight(model.weight);
-      el("metricWeightSub").textContent = `${pct(model.weightedFill)} effective fill`;
-      el("metricBalance").textContent = `${fmt(state.values.balance, 0)}%`;
-      el("metricBalanceSub").textContent = `${pct(model.smallShare)} small dense volume share`;
-      el("envVol").textContent = `${fmtInt(model.envelopeVolume)} cm³`;
-      el("occVol").textContent = `${fmtInt(model.volume)} cm³`;
-      el("voidOut").textContent = `${fmt(model.voidRatio * 100, 0)}%`;
-      el("cubeSide").textContent = fmtCm(model.cubeSide);
-      el("voxelSide").textContent = fmtCm(limits.voxelSide);
-      el("minSide").textContent = fmtCm(limits.minEnvelopeSide);
-      el("maxSide").textContent = fmtCm(limits.maxEnvelopeSide);
-      el("smallShare").textContent = pct(model.smallShare);
-      el("largeShare").textContent = pct(model.largeShare);
-      el("cPart").textContent = `${fmt(model.cPart, 2)} cm³ / part`;
-      el("partsPer100").textContent = fmt(model.partsPer100, 1);
-      el("bearingSize").textContent = `${fmt(model.bearingSizeMm, 1)} mm`;
-      el("largeFill").textContent = pct(model.largeFill);
-      el("weightedFill").textContent = pct(model.weightedFill);
-      const lockList = keys.filter(k => state.locks[k]).map(k => labels[k]).join(", ") || "none";
-      el("solverStatus").className = "status good";
-      el("solverStatus").innerHTML = `<b>${note}</b><span>Locked anchors: ${lockList}. Active driver: ${activeKey() ? labels[activeKey()] : "none"}.</span>`;
-      const balances = [0, 25, 50, 75, 100];
-      el("sampleRows").innerHTML = balances.map(b => {
-        const sample = calcFromVolume(model.volume, b, state.values.void);
-        return `<tr><td>${b}%</td><td>${pct(sample.smallShare, 1)}</td><td>${fmtInt(sample.parts)}</td><td>${fmtWeight(sample.weight)}</td><td>${pct(sample.weightedFill, 1)}</td></tr>`;
-      }).join("");
+    const anchors = anchorsFromLocks(null, active);
+    const states = buildValidStates(anchors, true);
+    if (!states.length) {
+      writeControls();
+      const model = modelFromValues(state.values);
+      render(model, { dims: { length: state.values.length, width: state.values.width, height: state.values.height }, limits: dimensionLimitsFromOccupied(model.volume, state.values.void) }, "No reachable state exists for the current locked anchors and active value. Move or unlock another parameter.");
+      return;
     }
 
-    function createControl(key) {
-      const parent = el(`control-${key}`);
-      const value = state.values[key];
-      parent.innerHTML = `<button id="${key}-lock" class="lock-btn" title="Lock / unlock">🔓</button><div class="control-main"><div class="label-row"><span class="label">${labels[key]}</span><span class="hint">${hints[key]}</span></div><input id="${key}-range" type="range" /></div><input id="${key}-number" type="number" />`;
-      const range = el(`${key}-range`);
-      const number = el(`${key}-number`);
-      if (key === "void") {
-        range.min = 0; range.max = 90; range.step = 5; number.min = 0; number.max = 90; number.step = 0.1;
-      } else if (key === "balance") {
-        range.min = 0; range.max = 100; range.step = 5; number.min = 0; number.max = 100; number.step = 0.1;
-      } else {
-        range.min = 0; range.max = 100; range.step = 1; number.min = 0; number.max = 100; number.step = 1;
-      }
+    const rep = chooseRepresentativeState(states, active);
+    for (const k of keys) {
+      if (state.locks[k] && k !== active) continue;
+      if (k === active) continue;
+      state.values[k] = rep[k];
+    }
+    // Keep locked and active targets as typed, but estimates are always rendered from final dimensions/void/balance.
+    const model = modelFromValues(state.values);
+    if (!state.locks.parts && active !== 'parts') state.values.parts = model.parts;
+    if (!state.locks.weight && active !== 'weight') state.values.weight = model.weight;
+    if (!state.locks.void && active !== 'void') state.values.void = rep.void;
+    if (!state.locks.balance && active !== 'balance') state.values.balance = rep.balance;
+
+    updateRanges();
+    writeControls();
+    const finalModel = modelFromValues(state.values);
+    const dims = { length: state.values.length, width: state.values.width, height: state.values.height };
+    render(finalModel, { dims, limits: dimensionLimitsFromOccupied(finalModel.volume, state.values.void) }, `${active ? labels[active] + " is the temporary anchor. " : ""}Unlocked parameters were set to a central reachable state from the current constraint system.`);
+  }
+
+  function describeModel(dims, model) {
+    const maxSide = Math.max(dims.length, dims.width, dims.height);
+    const minSide = Math.min(dims.length, dims.width, dims.height);
+    const ratio = maxSide / Math.max(minSide, 0.1);
+    const sizeClass = maxSide < 8 ? "very small" : maxSide < 16 ? "small" : maxSide < 32 ? "medium-sized" : maxSide < 60 ? "large" : "very large";
+    const shapeClass = ratio < 1.4 ? "compact, cube-like" : ratio < 2.2 ? "slightly elongated" : ratio < 4.0 ? "elongated and narrow" : "very long and narrow";
+    const dominant = maxSide === dims.height ? "vertical" : maxSide === dims.width ? "wide" : "horizontal";
+    const voidPct = state.values.void;
+    const voidClass = voidPct <= 20 ? "very low external void" : voidPct <= 40 ? "low external void" : voidPct <= 60 ? "balanced external void" : voidPct <= 75 ? "open structure" : "very open, airy structure";
+    const balance = state.values.balance;
+    const detailClass = balance <= 25 ? "mostly large structural parts" : balance <= 45 ? "simple-to-medium detail density" : balance <= 65 ? "medium-high detail density" : balance <= 85 ? "high detail density" : "very small-part-heavy detail density";
+    const densityText = model.partsPer100 < 35 ? "a simple, structural build" : model.partsPer100 < 70 ? "a balanced small-product style build" : model.partsPer100 < 110 ? "a detail-rich compact build" : "a very dense small-part-heavy build";
+    const text = `This is a ${sizeClass} ${shapeClass} LEGO model, approximately ${fmt(dims.length, 1)} × ${fmt(dims.width, 1)} × ${fmt(dims.height, 1)} cm. The proportions read as a ${dominant} object rather than a cube. The model has ${voidClass}, so ${voidPct <= 40 ? "most of the bounding volume is occupied by LEGO structure rather than empty space" : "the silhouette is partly shaped by open space and gaps"}. With about ${fmtInt(model.parts)} parts and ${fmtWeight(model.weight)} of estimated weight, it reads as ${densityText}. The ${fmt(balance, 0)}% detail balance indicates ${detailClass}, with ${pct(model.smallShare, 1)} of the occupied volume treated as small dense detail volume.`;
+    const tags = [sizeClass, shapeClass, dominant, voidClass, detailClass];
+    return { text, tags };
+  }
+
+  function renderDescription(dims, model) {
+    const box = el('modelDescription');
+    const tags = el('modelDescriptionTags');
+    if (!box || !tags) return;
+    const d = describeModel(dims, model);
+    box.innerHTML = `<p>${d.text}</p>`;
+    tags.innerHTML = d.tags.map(t => `<span>${t}</span>`).join('');
+  }
+
+  function render(model, dimsInfo, note) {
+    const dims = dimsInfo.dims;
+    const limits = dimsInfo.limits;
+    el("metricDims").textContent = `${fmt(dims.length, 1)} × ${fmt(dims.width, 1)} × ${fmt(dims.height, 1)}`;
+    el("metricDimsSub").textContent = "cm envelope size";
+    el("metricParts").textContent = fmtInt(model.parts);
+    el("metricPartsSub").textContent = `${fmt(model.partsPer100, 1)} parts / 100 occupied cm³`;
+    el("metricWeight").textContent = fmtWeight(model.weight);
+    el("metricWeightSub").textContent = `${pct(model.weightedFill)} effective fill`;
+    el("metricBalance").textContent = `${fmt(state.values.balance, 1)}%`;
+    el("metricBalanceSub").textContent = `${pct(model.smallShare)} small dense volume share`;
+    el("envVol").textContent = `${fmtInt(model.envelopeVolume)} cm³`;
+    el("occVol").textContent = `${fmtInt(model.volume)} cm³`;
+    el("voidOut").textContent = `${fmt(state.values.void, 1)}%`;
+    el("cubeSide").textContent = fmtCm(model.cubeSide);
+    el("voxelSide").textContent = fmtCm(limits.voxelSide);
+    el("minSide").textContent = fmtCm(limits.minEnvelopeSide);
+    el("maxSide").textContent = fmtCm(limits.maxEnvelopeSide);
+    el("smallShare").textContent = pct(model.smallShare);
+    el("largeShare").textContent = pct(model.largeShare);
+    el("cPart").textContent = `${fmt(model.cPart, 2)} cm³ / part`;
+    el("partsPer100").textContent = fmt(model.partsPer100, 1);
+    el("bearingSize").textContent = `${fmt(model.bearingSizeMm, 1)} mm`;
+    el("largeFill").textContent = pct(model.largeFill);
+    el("weightedFill").textContent = pct(model.weightedFill);
+    const lockList = keys.filter(k => state.locks[k]).map(k => labels[k]).join(", ") || "none";
+    el("solverStatus").className = "status good";
+    el("solverStatus").innerHTML = `<b>${note}</b><span>Locked anchors: ${lockList}. Active driver: ${state.lastChanged ? labels[state.lastChanged] : "none"}. At least two parameters remain unlocked.</span>`;
+    const balances = [0, 25, 50, 75, 100];
+    el("sampleRows").innerHTML = balances.map(b => {
+      const sample = calcFromVolume(model.volume, b, state.values.void);
+      return `<tr><td>${b}%</td><td>${pct(sample.smallShare, 1)}</td><td>${fmtInt(sample.parts)}</td><td>${fmtWeight(sample.weight)}</td><td>${pct(sample.weightedFill, 1)}</td></tr>`;
+    }).join("");
+    renderDescription(dims, model);
+  }
+
+  function updateRangeAttrs(key) {
+    const range = el(`${key}-range`), number = el(`${key}-number`);
+    if (!range || !number) return;
+    const r = state.currentRanges[key] || globalRanges[key];
+    let min = Math.max(globalRanges[key].min, Math.floor(r.min * 10) / 10);
+    let max = Math.min(globalRanges[key].max, Math.ceil(r.max * 10) / 10);
+    if (key === 'parts') { min = Math.max(1, Math.floor(r.min)); max = Math.max(min + 1, Math.ceil(r.max)); }
+    if (key === 'weight') { min = Math.max(0.1, Math.floor(r.min * 10) / 10); max = Math.max(min + 0.1, Math.ceil(r.max * 10) / 10); }
+    if (key === 'void') { min = Math.max(0, Math.floor(r.min)); max = Math.min(90, Math.ceil(r.max)); }
+    if (key === 'balance') { min = Math.max(0, Math.floor(r.min)); max = Math.min(100, Math.ceil(r.max)); }
+    range.min = min; range.max = max; range.step = globalRanges[key].step;
+    number.min = min; number.max = max; number.step = globalRanges[key].step;
+  }
+
+  function writeControls() {
+    for (const k of keys) updateRangeAttrs(k);
+    for (const k of keys) {
+      const range = el(`${k}-range`), number = el(`${k}-number`);
+      if (!range || !number) continue;
+      let value = state.values[k];
+      if (k === "length" || k === "width" || k === "height") value = Number(value).toFixed(1);
+      if (k === "parts") value = Math.round(value);
+      if (k === "weight") value = Number(value).toFixed(1);
+      if (k === "void" || k === "balance") value = Number(value).toFixed(1);
       range.value = value;
       number.value = value;
-      const onInput = (raw, fromRange = false) => {
-        let v = finite(raw, state.values[key]);
-        if (key === "void") v = clamp(fromRange ? Math.round(v / 5) * 5 : v, 0, 90);
-        if (key === "balance") v = clamp(fromRange ? Math.round(v / 5) * 5 : v, 0, 100);
-        state.values[key] = v;
-        state.lastChanged = key;
-        state.note = `${labels[key]} was changed; unlocked values adapted.`;
-        solve();
-      };
-      range.addEventListener("input", () => onInput(range.value, true));
-      number.addEventListener("change", () => onInput(number.value, false));
-      el(`${key}-lock`).addEventListener("click", () => {
-        state.locks[key] = !state.locks[key];
-        state.lastChanged = null;
-        state.note = `${labels[key]} was ${state.locks[key] ? "locked" : "unlocked"}.`;
-        solve();
-      });
     }
-
-    function writeControls() {
-      for (const k of keys) {
-        const range = el(`${k}-range`);
-        const number = el(`${k}-number`);
-        if (!range || !number) continue;
-        let value = state.values[k];
-        if (k === "length" || k === "width" || k === "height") value = Number(value).toFixed(1);
-        if (k === "parts") value = Math.round(value);
-        if (k === "weight") value = Number(value).toFixed(1);
-        if (k === "void" || k === "balance") value = Number(value).toFixed(1);
-        range.value = value;
-        number.value = value;
-      }
-      for (const k of keys) {
-        const btn = el(`${k}-lock`);
-        if (!btn) continue;
-        btn.classList.toggle("locked", !!state.locks[k]);
-        btn.textContent = state.locks[k] ? "🔒" : "🔓";
-      }
+    for (const k of keys) {
+      const btn = el(`${k}-lock`);
+      if (!btn) continue;
+      btn.classList.toggle("locked", !!state.locks[k]);
+      btn.textContent = state.locks[k] ? "🔒" : "🔓";
     }
+  }
 
-    for (const k of keys) createControl(k);
-    solve();
-  </script>
+  function createControl(key) {
+    const parent = el(`control-${key}`);
+    const value = state.values[key];
+    parent.innerHTML = `<button id="${key}-lock" class="lock-btn" title="Lock / unlock">🔓</button><div class="control-main"><div class="label-row"><span class="label">${labels[key]}</span><span class="hint">${hints[key]}</span></div><input id="${key}-range" type="range" /></div><input id="${key}-number" type="number" />`;
+    const range = el(`${key}-range`);
+    const number = el(`${key}-number`);
+    range.value = value;
+    number.value = value;
+    const onInput = raw => {
+      let v = finite(raw, state.values[key]);
+      if (!validateUserValue(key, v)) {
+        state.note = `${labels[key]} is outside its reachable range for the current locked anchors.`;
+        writeControls();
+        return;
+      }
+      state.values[key] = v;
+      state.lastChanged = key;
+      state.note = `${labels[key]} is the active temporary anchor; unlocked values adapt within reachable ranges.`;
+      solve(key);
+    };
+    range.addEventListener("input", () => onInput(range.value));
+    number.addEventListener("change", () => onInput(number.value));
+    el(`${key}-lock`).addEventListener("click", () => {
+      if (!state.locks[key] && countUnlocked() <= MIN_UNLOCKED) {
+        state.note = "Cannot lock this value: at least two parameters must remain unlocked so the model can adapt.";
+        solve(null);
+        return;
+      }
+      const nextLocks = { ...state.locks, [key]: !state.locks[key] };
+      const testAnchors = {};
+      for (const k of keys) if (nextLocks[k]) testAnchors[k] = finite(state.values[k], 0);
+      if (nextLocks[key] && !buildValidStates(testAnchors, false).length) {
+        state.note = `Cannot lock ${labels[key]}: this would make the current constraint system unreachable.`;
+        solve(null);
+        return;
+      }
+      state.locks[key] = !state.locks[key];
+      state.lastChanged = null;
+      state.note = `${labels[key]} was ${state.locks[key] ? "locked" : "unlocked"}.`;
+      solve(null);
+    });
+  }
+
+  // Update outdated explanatory copy if present.
+  const lockHelp = document.querySelector('.lock-help');
+  if (lockHelp) {
+    lockHelp.innerHTML = '<span>Move any slider/input to make it the active temporary anchor.</span><span>🔒 locked = fixed anchor; the solver will not change it.</span><span>🔓 unlocked = solved from the current reachable range.</span><span>At least two parameters must remain unlocked so the model can adapt.</span>';
+  }
+
+  for (const k of keys) createControl(k);
+  solve(null);
+})();
+</script>
+
 
 </body>
 </html>
